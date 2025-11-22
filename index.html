@@ -10,97 +10,163 @@
   <meta charset="UTF-8" />
   <title>My AO3 EPUB Library</title>
   <style>
-    :root {
-      /* Slytherin palette */
-      --emerald: #1a472a;
-      --emerald-dark: #0b3018;
-      --gold: #d4af37;
-      --black: #050505;
-      --silver: #c0c0c0;
-      --grey-light: #e5e5e5;
-      --grey: #9e9e9e;
-      --grey-dark: #3a3a3a;
-    }
+  :root {
+    /* Slytherin palette */
+    --emerald: #0b5d3b;      /* primary green */
+    --gold: #d5a53a;         /* accent gold */
+    --black: #050608;        /* near-black */
+    --silver: #c7c9ce;       /* main light text / borders */
+    --grey-light: #e3e4e8;   /* light backgrounds */
+    --grey-mid: #9ca0a8;     /* muted text */
+    --grey-dark: #3b3f46;    /* card background */
+  }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem 3rem;
-      line-height: 1.5;
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem 3rem;
+    line-height: 1.5;
 
-      /* Dark Slytherin background */
-      background: radial-gradient(circle at top, var(--emerald-dark) 0, var(--black) 55%);
-      color: var(--grey-light);
-    }
+    /* overall page */
+    background-color: var(--black);
+    color: var(--silver);
+  }
 
-    h1 {
-      margin-bottom: 0.5rem;
-      color: var(--silver);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+  h1 {
+    margin-bottom: 0.5rem;
+    color: var(--silver);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
 
-    /* Search area */
-    .search-area {
-      margin-bottom: 1rem;
-    }
+  h1 span {
+    color: var(--emerald);
+  }
 
-    #searchInput {
-      width: 100%;
-      max-width: 450px;
-      padding: 0.5rem 0.75rem;
-      font-size: 1rem;
-      border-radius: 6px;
+  p {
+    color: var(--grey-light);
+  }
 
-      background-color: var(--grey-dark);
-      border: 1px solid var(--emerald);
-      color: var(--grey-light);
-      box-sizing: border-box;
-    }
+  a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
 
-    #searchInput::placeholder {
-      color: var(--grey);
-    }
+  a:hover {
+    border-bottom-color: var(--gold);
+  }
 
-    /* Results container */
-    #results {
-      margin-top: 1rem;
-    }
+  /* search area */
+  .search-area {
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    background: radial-gradient(circle at top left,
+                rgba(11, 93, 59, 0.35),
+                rgba(5, 6, 8, 1));
+    border: 1px solid rgba(199, 201, 206, 0.25);
+  }
 
-    /* Fic cards */
-    .fic {
-      background: linear-gradient(
-        135deg,
-        var(--grey-light),
-        #fdfdfd
-      );                                /* light card for readability */
-      color: #111111;
-      border-radius: 10px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1rem;
-      border: 1px solid var(--emerald);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
-    }
+  label {
+    display: block;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--silver);
+    margin-bottom: 0.35rem;
+  }
 
-    .fic h2 {
-      margin: 0 0 0.25rem;
-      font-size: 1.2rem;
-    }
+  input[type="text"] {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--grey-dark);
+    background-color: #111318;
+    color: var(--grey-light);
+  }
 
-    /* Links inside titles */
-    .fic h2 a {
-      text-decoration: none;
-      color: var(--emerald);
-      font-weight: 600;
-    }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--emerald);
+    box-shadow: 0 0 0 1px rgba(11, 93, 59, 0.4);
+  }
 
-    .fic h2 a:hover {
-      text-decoration: underline;
-      color: var(--gold);
-    }
+  /* fic result card */
+  .fic {
+    background-color: var(--grey-dark);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(199, 201, 206, 0.22);
+  }
 
-    </style>
+  .fic h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+    color: var(--grey-light);
+  }
+
+  .meta {
+    font-size: 0.85rem;
+    color: var(--grey-mid);
+    margin-bottom: 0.4rem;
+  }
+
+  .summary {
+    margin: 0.4rem 0 0.6rem;
+    color: var(--grey-light);
+  }
+
+  /* tags */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(199, 201, 206, 0.35);
+    background: rgba(5, 6, 8, 0.75);
+    color: var(--grey-light);
+  }
+
+  /* Cort rec badge */
+  .corts {
+    margin-top: 0.5rem;
+  }
+
+  .cort-badge {
+    display: inline-block;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+
+    background: linear-gradient(
+      90deg,
+      var(--emerald),
+      var(--gold)
+    );
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* "No results" / error state */
+  .empty {
+    color: var(--grey-mid);
+    font-style: italic;
+    margin-top: 1rem;
+  }
+</style>
+
+
 </head>
 <body>
   <h1>Book Club EPUB Library</h1>
