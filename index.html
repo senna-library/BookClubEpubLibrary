@@ -199,26 +199,9 @@
   }
 
   .cort-badge {
-    display: inline-block;
-    padding: 0.35rem 0.65rem;
-    border-radius: 0.3rem;
-
-    background: linear-gradient(
-      135deg,
-      var(--emerald),
-      var(--sage)
-    );
-    border: 1.5px solid var(--antique-gold);
-    color: var(--parchment);
-    font-weight: 600;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-family: 'Georgia', serif;
-    box-shadow:
-      0 2px 6px rgba(0, 0, 0, 0.5),
-      0 0 8px rgba(201, 169, 97, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    display: block;
+    max-width: 55px;
+    height: auto;
   }
 
   /* "No results" / error state */
@@ -368,7 +351,7 @@
     }
 
     const cortsHtml = isCortRec
-      ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
+      ? `<div class="corts"><img src="images/cortrec.png" alt="Cort Rec" class="cort-badge"></div>`
       : "";
 
     return `
