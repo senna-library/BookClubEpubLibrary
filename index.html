@@ -129,7 +129,7 @@ h1 {
   </style>
 </head>
 <body>
-  <h1>BC EPUB Library</h1>
+  <h1>Book Club EPUB Library</h1>
   <p style="margin-top: -0.4rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: #f7f7f7;">
   Hosted by <strong>Cort</strong>, <strong>Deydralinne</strong>, <strong>Lexi</strong>, and <strong>SennaSlytherin</strong>
 </p>
@@ -211,9 +211,15 @@ h1 {
             ? item.tags.map((t) => `<span class="tag">${t}</span>`).join(" ")
             : "";
 
-        const cortsHtml = item.cortsTiktokRecs
-          ? `<div class="corts">Cort's Tiktok Recs: ${item.cortsTiktokRecs}</div>`
-          : "";
+       // Decide if this is a real Cort rec (not blank or "false")
+        const isCortRec =
+            item.cortsTiktokRecs &&
+                normalize(item.cortsTiktokRecs) !== "false";
+
+const cortsHtml = isCortRec
+  ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
+  : "";
+
 
         return `
           <article class="fic">
