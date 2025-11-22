@@ -8,7 +8,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>My AO3 EPUB Library</title>
+  <title>EPUB Library</title>
   <style>
   :root {
     /* Slytherin palette */
@@ -58,16 +58,32 @@
     border-bottom-color: var(--gold);
   }
 
-  /* search area */
   .search-area {
-    margin: 1.5rem 0 2rem;
-    padding: 1rem 1.25rem;
-    border-radius: 0.75rem;
-    background: radial-gradient(circle at top left,
-                rgba(11, 93, 59, 0.35),
-                rgba(5, 6, 8, 1));
-    border: 1px solid rgba(199, 201, 206, 0.25);
-  }
+  margin: 1.5rem 0 2rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+
+  /* Solid color */
+  background-color: #0b5d3b; /* emerald */
+
+  border: 1px solid rgba(199, 201, 206, 0.25);
+}
+
+/* Input becomes light-on-dark for readability */
+#searchInput {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.5rem;
+
+  background-color: #1a1f1d;     /* deep charcoal */
+  border: 1px solid #3a3f46;     /* medium grey */
+  color: #f1f1f1;                /* light text */
+}
+
+#searchInput::placeholder {
+  color: #b7b7b7; /* softer grey */
+}
+
 
   label {
     display: block;
