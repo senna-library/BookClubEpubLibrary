@@ -223,26 +223,14 @@ h1 {
         rawCort !== "no";
 
 // Build the HTML if it's a Cort Rec
-    const cortsHtml = isCortRec
-         ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
-            : "";
+            // ✅ Only show badge if the sheet value is TRUE
+        const isCortRec =
+          normalize(item.cortsTiktokRecs) === "true"; // treats "TRUE" / "true" as Cort Rec
 
+        const cortsHtml = isCortRec
+          ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
+          : "";
 
-        {return `
-          <article class="fic">
-            <h2>${titleHtml}</h2>
-            <div class="meta">
-              <span><strong>Author:</strong> ${item.author || "Unknown"}</span>
-              <span><strong>Words:</strong> ${item.words || "?"}</span>
-              <span><strong>Chapters:</strong> ${item.chapters || "?"}</span>
-              <span><strong>Main Relationship:</strong> ${item.mainRelationship || "—"}</span>
-            </div>
-            <p class="summary">${item.summary || ""}</p>
-            <div class="tags">${tagsHtml}</div>
-            ${cortsHtml}
-          </article>
-        `;
-      })
       .join("");
 
     resultsContainer.innerHTML = html;
