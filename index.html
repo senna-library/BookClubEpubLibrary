@@ -212,13 +212,21 @@ h1 {
             : "";
 
        // Decide if this is a real Cort rec (not blank or "false")
-        const isCortRec =
-            item.cortsTiktokRecs &&
-                normalize(item.cortsTiktokRecs) !== "false";
+        // Determine if this fic is a Cort Rec
+const rawCort = normalize(item.cortsTiktokRecs);   // lowercase version
 
+// Only show if: value exists AND is not "false"
+const isCortRec =
+  rawCort &&
+  rawCort !== "false" &&
+  rawCort !== "0" &&
+  rawCort !== "no";
+
+// Build the HTML if it's a Cort Rec
 const cortsHtml = isCortRec
   ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
   : "";
+
 
 
         return `
