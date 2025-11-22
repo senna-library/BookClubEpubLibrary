@@ -414,6 +414,10 @@ if (cortsFilter) {
     applyFilters();
   });
 }
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadSheetData();
+  applyFilters();
+});
 
   </script>
 </body>
