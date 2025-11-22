@@ -212,30 +212,41 @@ h1 {
       return;
     }
 
-    const html = items
-      .map((item) => {
-        const titleHtml = item.linkOnServer
-          ? `<a href="${item.linkOnServer}" target="_blank" rel="noopener noreferrer">${item.title}</a>`
-          : item.title;
+   const html = items
+  .map((item) => {
+    const titleHtml = item.linkOnServer
+      ? `<a href="${item.linkOnServer}" target="_blank" rel="noopener noreferrer">${item.title}</a>`
+      : item.title;
 
-        const tagsHtml =
-          item.tags && item.tags.length
-            ? item.tags.map((t) => `<span class="tag">${t}</span>`).join(" ")
-            : "";
+    const tagsHtml =
+      item.tags && item.tags.length
+        ? item.tags.map((t) => `<span class="tag">${t}</span>`).join(" ")
+        : "";
 
-       // Decide if this is a real Cort rec (not blank or "false")
-     
-    const rawCort = normalize(item.cortsTiktokRecs);   // lowercase version
-    // // Build the HTML if it's a Cort Rec
-            // ✅ Only show badge if the sheet value is TRUE
-        const isCortRec =
-          normalize(item.cortsTiktokRecs) === "true"; // treats "TRUE" / "true" as Cort Rec
+    // Decide if this is a real Cort Rec (checked box in the sheet)
+    const isCortRec = normalize(item.cortsTiktokRecs) === "true";
 
-        const cortsHtml = isCortRec
-          ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
-          : "";
+    const cortsHtml = isCortRec
+      ? `<div class="corts"><span class="cort-badge">✅ Cort Rec</span></div>`
+      : "";
 
-      .join("");
+    return `
+      <article class="fic">
+        <h2>${titleHtml}</h2>
+        <div class="meta">
+          <span><strong>Author:</strong> ${item.author || "Unknown"}</span>
+          <span><strong>Words:</strong> ${item.words || "?"}</span>
+          <span><strong>Chapters:</strong> ${item.chapters || "?"}</span>
+          <span><strong>Main Relationship:</strong> ${item.mainRelationship || "—"}</span>
+        </div>
+        <p class="summary">${item.summary || ""}</p>
+        <div class="tags">${tagsHtml}</div>
+        ${cortsHtml}
+      </article>
+    `;
+  })
+  .join("");
+
 
     resultsContainer.innerHTML = html;
   }
