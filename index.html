@@ -109,124 +109,72 @@
   <div id="results"></div>
 
   <script>
-    // 🗂️ Your fic data lives here
-    // Start with a couple of examples. We can add the rest later.
-    const library = [ {
-  title: "A Darker Blue",
-  linkOnServer: "https://discord.com/channels/1112811873369333770/1396648436790464583/1397467579513307267",
-  author: "skitter",
-  words: 149009,
-  chapters: "28",
-  mainRelationship: "Hermione Granger/Draco Malfoy",
-  summary: `The War rages and leaves a trail of broken things in its wake. Swept out with the raging sea, Hermione and Draco must learn to live with themselves and each other. Violence begets violence in an endless loop that they will either break from or beneath. Survival is the goal but not necessarily the destination and regardless of private desires, they'll have no choice but to weather the storm together.`,
-  tags: [
-    "Hermione Granger/Draco Malfoy", "Hermione Granger", "Draco Malfoy", "Harry Potter",
-    "Alastor 'Mad-Eye' Moody", "Slow Burn", "Angst", "Wartime AU", "Post-Canon",
-    "Enemies to Friends to Lovers", "Emotional Hurt/Comfort",
-    "Implied/Referenced Alcohol Abuse/Alcoholism",
-    "okay technically it's Potions but you get the idea",
-    "Post-Traumatic Stress Disorder - PTSD",
-    "Other Additional Tags to Be Added", "POV First Person",
-    "alternating POV chapters", "Graphic Descriptions of Injuries",
-    "Over abundance of ocean metaphors", "Permanent Injury", "Loss of Limbs",
-    "well just the one limb and it's only a little gone", "F/M",
-    "Graphic Depictions Of Violence", "Suicidal Thoughts",
-    "Major Character Injury", "Character Study", "Forced Cohabitation",
-    "Eventual HEA", "Mutual Pining"
-  ],
-  cortsTiktokRecs: ""
-},
-{
-  title: "A Daughter of Dragons",
-  linkOnServer: "https://discord.com/chchannels/1112811873369333770/1396648436790464583/1413804574363353240",
-  author: "Deydralinne",
-  words: 2500,
-  chapters: "1",
-  mainRelationship: "Charlie Weasley/Ginny Weasley",
-  summary: `Lily is all grown up and it's time she carved her own path, Ginny, Harry, Charlie and George help get her settled into her new place. There's also something she has been meaning to say to Uncle Charlie…`,
-  tags: [
-    "Explicit", "Charlie Weasley/Ginny Weasley", "Harry Potter/George Weasley",
-    "Ginny Weasley", "Harry Potter", "Charlie Weasley", "George Weasley",
-    "Lily Luna Potter", "Original Characters", "sibling love child",
-    "Sibling Love", "its a fluffy family moment for Charlie and ginnys child",
-    "what can i say", "the weasleys are whores", "post a witch's flame",
-    "lily all grown up", "its okay they are soul mates", "cheeky one shot",
-    "F/M", "M/M", "Choose Not To Use Archive Warnings", "Incest",
-    "Weasley incest", "Sibling Incest", "ginny is married to harry",
-    "but harry is fucking george", "and ginny is fucking charlie",
-    "yes I mean her brother", "taboo fluff", "Is taboo fluff a thing?",
-    "It is now", "the previous work in the is series is about 10 years before this",
-    "that was a weird way of saying that", "sorry - Freeform", "not sorry"
-  ],
-  cortsTiktokRecs: ""
-},
-{
-  title: "A Different Kind of Magic",
-  linkOnServer: "https://discord.com/channels/1112811873369333770/1396648436790464583/1396730129010524230",
-  author: "maisey2k10",
-  words: 146928,
-  chapters: "36",
-  mainRelationship: "Hermione Granger/Fred Weasley/George Weasley",
-  summary: `Hermione’s secret is discovered by the Order of the Phoenix and she's in need of saving. With the help of Sirius, she learns to put the past behind her, and with the help of the Weasley Twins, they show her a happy future. But Hermione isn’t who she thinks she is, what she discovers will change both her life and the future of the Wizarding World for good.
+  // 🔗 Your published Google Sheet (TSV)
+  const SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSw2PTQY-cYcZm02BVyXM5opvi7Exun9P0qLFtQvb6Lv5ByPb6vnpsi3lls_hAEyJ6m1hlWXv9pPvgT/pub?gid=162465043&single=true&output=tsv";
 
-Rated for language, violence and sexual content. Triad fic! HGxFWxGW pairing! No Twincest! Soulmates! Powerful!Hermione! Some Ginny/Ron bashing.
-Written September 2016 - August 2017.`,
-  tags: [
-    "Hermione Granger/Fred Weasley/George Weasley", "Hermione Granger",
-    "Fred Weasley", "George Weasley", "Sirius Black", "Remus Lupin",
-    "Harry Potter", "Romance", "Family", "AU", "Humour", "Multi",
-    "Graphic Depictions Of Violence", "Major Character Death",
-    "Rape/Non-Con", "Underage", "Triad - Freeform", "Powerful! Hermione!",
-    "SOULMATES!", "Remus Lupin/Nymphadora Tonks", "Severus Snape",
-    "Albus Dumbledore", "Sexual Content", "bad language", "Violence",
-    "Threesome - F/M/M", "Implied/Referenced Sexual Assault",
-    "Implied Childhood Sexual Abuse", "Implied/Referenced Child Abuse",
-    "No Twincest!", "Ginny Bashing!", "Ron Bashing! He redeems himself!",
-    "Teen Pregnancy"
-  ],
-  cortsTiktokRecs: ""
-}
+  // 📚 This will hold all your fics from the sheet
+  let library = [];
 
-      // 👉 Add more fics here, each one is a { ... } block separated by commas
-    ];
+  // 🔗 Grab elements from the page
+  const resultsContainer = document.getElementById("results");
+  const searchInput = document.getElementById("searchInput");
+  const cortsFilter = document.getElementById("cortsFilter"); // ok if this doesn't exist
 
-    // 🔍 Helper to safely lowercase text
-    function normalize(value) {
-      return (value || "").toString().toLowerCase();
+  // 🧹 Safely lowercase text
+  function normalize(value) {
+    return (value || "").toString().toLowerCase();
+  }
+
+  // 🎯 Does this fic match the search text?
+  function matchesQuery(item, query) {
+    if (!query) return true;
+    const q = normalize(query);
+
+    return (
+      normalize(item.title).includes(q) ||
+      normalize(item.author).includes(q) ||
+      normalize(item.mainRelationship).includes(q) ||
+      normalize(item.summary).includes(q) ||
+      normalize((item.tags || []).join(" ")).includes(q) ||
+      normalize(item.cortsTiktokRecs).includes(q)
+    );
+  }
+
+  // (optional) extra filtering for Cort's recs, if you add a dropdown
+  function matchesCortsFilter(item) {
+    if (!cortsFilter || !cortsFilter.value || cortsFilter.value === "all") {
+      return true;
     }
 
-    // 👀 Decide if a fic matches the search text
-    function matchesQuery(item, query) {
-      if (!query) return true; // if box is empty, show everything
-      const q = normalize(query);
-
-      return (
-        normalize(item.title).includes(q) ||
-        normalize(item.author).includes(q) ||
-        normalize(item.mainRelationship).includes(q) ||
-        normalize(item.summary).includes(q) ||
-        normalize((item.tags || []).join(" ")).includes(q) ||
-        normalize(item.cortsTiktokRecs).includes(q)
-      );
+    if (cortsFilter.value === "corts-only") {
+      // Treat anything not FALSE/empty as a rec
+      return normalize(item.cortsTiktokRecs) && normalize(item.cortsTiktokRecs) !== "false";
     }
 
-    // 🖼️ Render the fic list into the page
-    function renderResults(items) {
-      const container = document.getElementById("results");
+    return true;
+  }
 
-      if (!items.length) {
-        container.innerHTML = '<p class="empty">No results. Try a different search term.</p>';
-        return;
-      }
+  // 🖼️ Render the fic list into the page
+  function renderResults(items) {
+    if (!resultsContainer) return;
 
-      const html = items.map(item => {
+    if (!items.length) {
+      resultsContainer.innerHTML =
+        '<p class="empty">No results. Try a different search term.</p>';
+      return;
+    }
+
+    const html = items
+      .map((item) => {
         const titleHtml = item.linkOnServer
           ? `<a href="${item.linkOnServer}" target="_blank" rel="noopener noreferrer">${item.title}</a>`
           : item.title;
 
-        const tagsHtml = (item.tags && item.tags.length)
-          ? item.tags.map(t => `<span class="tag">${t}</span>`).join(" ")
-          : "";
+        const tagsHtml =
+          item.tags && item.tags.length
+            ? item.tags.map((t) => `<span class="tag">${t}</span>`).join(" ")
+            : "";
 
         const cortsHtml = item.cortsTiktokRecs
           ? `<div class="corts">Cort's Tiktok Recs: ${item.cortsTiktokRecs}</div>`
@@ -246,21 +194,98 @@ Written September 2016 - August 2017.`,
             ${cortsHtml}
           </article>
         `;
-      }).join("");
+      })
+      .join("");
 
-      container.innerHTML = html;
+    resultsContainer.innerHTML = html;
+  }
+
+  // 🔎 Apply search + Cort's filter to the library and show results
+  function applyFilters() {
+    const query = searchInput ? searchInput.value : "";
+    const filtered = library.filter(
+      (item) => matchesQuery(item, query) && matchesCortsFilter(item)
+    );
+    renderResults(filtered);
+  }
+
+  // 📥 Load data from the Google Sheet
+  async function loadSheetData() {
+    console.log("Fetching sheet from:", SHEET_URL);
+    const response = await fetch(SHEET_URL);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
     }
 
-    // 🔁 Wire up the search box
-    const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value;
-      const filtered = library.filter(item => matchesQuery(item, query));
-      renderResults(filtered);
+    const text = await response.text();
+    console.log("Raw sheet text (first 200 chars):", text.slice(0, 200));
+
+    const rows = text
+      .trim()
+      .split("\n")
+      .map((row) => row.split("\t"));
+
+    const [headerRow, ...dataRows] = rows;
+    console.log("Headers:", headerRow);
+
+    library = dataRows.map((cols) => {
+      const [
+        title,
+        linkOnServer,
+        author,
+        words,
+        chapters,
+        mainRelationship,
+        summary,
+        tags,
+        cortsTiktokRecs,
+      ] = cols;
+
+      return {
+        title: title || "",
+        linkOnServer: linkOnServer || "",
+        author: author || "",
+        words: words || "",
+        chapters: chapters || "",
+        mainRelationship: mainRelationship || "",
+        summary: summary || "",
+        tags: tags ? tags.split(",").map((t) => t.trim()) : [],
+        cortsTiktokRecs: cortsTiktokRecs || "",
+      };
     });
 
-    // Show everything when the page first loads
-    renderResults(library);
+    console.log("Loaded items:", library.length);
+  }
+
+  // 🔁 Wire up events
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      applyFilters();
+    });
+  }
+
+  if (cortsFilter) {
+    cortsFilter.addEventListener("change", () => {
+      applyFilters();
+    });
+  }
+
+  // 🚀 On page load: fetch sheet, then show results
+  (async function init() {
+    try {
+      await loadSheetData();
+      applyFilters();
+    } catch (err) {
+      console.error("Error loading sheet:", err);
+      if (resultsContainer) {
+        resultsContainer.innerHTML =
+          "<p class='empty'>Error loading data from Google Sheets.</p>";
+      }
+    }
+  })();
   </script>
 </body>
 </html>
+
+
