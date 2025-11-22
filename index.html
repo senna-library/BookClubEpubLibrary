@@ -229,6 +229,19 @@
     font-family: 'Georgia', serif;
   }
 
+  /* Library count */
+  .library-count {
+    color: var(--sage);
+    font-family: 'Georgia', serif;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .library-count strong {
+    color: var(--antique-gold);
+  }
+
   /* Random Rec Button */
   .random-btn {
     float: right;
@@ -261,9 +274,10 @@
 </head>
 <body>
   <h1>Book Club EPUB Library</h1>
-  <p style="margin-top: -0.4rem; margin-bottom: 1.5rem; font-size: 0.95rem; color: var(--aged-paper); font-family: 'Georgia', serif;">
+  <p style="margin-top: -0.4rem; margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--aged-paper); font-family: 'Georgia', serif;">
   Hosted by <strong style="color: var(--antique-gold);">Cort</strong>, <strong style="color: var(--antique-gold);">Deydralinne</strong>, <strong style="color: var(--antique-gold);">Lexi</strong>, and <strong style="color: var(--antique-gold);">Senna</strong>
 </p>
+  <p class="library-count" id="libraryCount">Loading library...</p>
   <div class="search-area">
     <label for="searchInput"><strong>Search</strong> (title, author, tags, etc.):</label><br />
     <input id="searchInput" type="text" placeholder="Start typing: drarry, coffee shop, author name..." />
@@ -437,31 +451,33 @@
     const [headerRow, ...dataRows] = rows;
     console.log("Headers:", headerRow);
 
-    library = dataRows.map((cols) => {
-      const [
-        title,
-        linkOnServer,
-        author,
-        words,
-        chapters,
-        mainRelationship,
-        summary,
-        tags,
-        cortsTiktokRecs,
-      ] = cols;
+    library = dataRows
+      .map((cols) => {
+        const [
+          title,
+          linkOnServer,
+          author,
+          words,
+          chapters,
+          mainRelationship,
+          summary,
+          tags,
+          cortsTiktokRecs,
+        ] = cols;
 
-      return {
-        title: title || "",
-        linkOnServer: linkOnServer || "",
-        author: author || "",
-        words: words || "",
-        chapters: chapters || "",
-        mainRelationship: mainRelationship || "",
-        summary: summary || "",
-        tags: tags ? tags.split(",").map((t) => t.trim()) : [],
-        cortsTiktokRecs: cortsTiktokRecs || "",
-      };
-    });
+        return {
+          title: title || "",
+          linkOnServer: linkOnServer || "",
+          author: author || "",
+          words: words || "",
+          chapters: chapters || "",
+          mainRelationship: mainRelationship || "",
+          summary: summary || "",
+          tags: tags ? tags.split(",").map((t) => t.trim()) : [],
+          cortsTiktokRecs: cortsTiktokRecs || "",
+        };
+      })
+      .filter((item) => item.title && item.title.trim() !== "");
 
     console.log("Loaded items:", library.length);
     // Debug: Show the first few items and their cortsTiktokRecs values
@@ -469,6 +485,12 @@
     library.slice(0, 3).forEach((item, idx) => {
       console.log(`  [${idx}] ${item.title}: cortsTiktokRecs = "${item.cortsTiktokRecs}"`);
     });
+
+    // Update library count display
+    const libraryCountEl = document.getElementById("libraryCount");
+    if (libraryCountEl) {
+      libraryCountEl.innerHTML = `Our library contains <strong>${library.length}</strong> ${library.length === 1 ? 'fic' : 'fics'}`;
+    }
   }
 
   // 🔁 Wire up events
