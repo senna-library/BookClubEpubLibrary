@@ -199,15 +199,45 @@
 
     resultsContainer.innerHTML = html;
   }
+  // 🎲 Pick up to "count" random items from an array
+  function getRandomItems(items, count) {
+    const copy = [...items]; // shallow copy so we don't mutate the original
+
+    // Fisher–Yates shuffle
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy.slice(0, Math.min(count, copy.length));
+  }
 
   // 🔎 Apply search + Cort's filter to the library and show results
   function applyFilters() {
-    const query = searchInput ? searchInput.value : "";
-    const filtered = library.filter(
-      (item) => matchesQuery(item, query) && matchesCortsFilter(item)
-    );
-    renderResults(filtered);
+    if (!library.length) {
+      // no data yet
+      if (resultsContainer) {
+        resultsContainer.innerHTML = "<p class='empty'>Loading…</p>";
+      }
+      return;
+    }
+
+    const query = searchInput ? searchInput.value.trim() : "";
+
+    // Always respect the Cort's filter first (if you use it)
+    let filtered = library.filter((item) => matchesCortsFilter(item));
+
+    if (query) {
+      // If there's a search term: filter by text and show ALL matches
+      filtered = filtered.filter((item) => matchesQuery(item, query));
+      renderResults(filtered);
+    } else {
+      // If search box is empty: show 5 random fics from the filtered list
+      const randomFive = getRandomItems(filtered, 5);
+      renderResults(randomFive);
+    }
   }
+
 
   // 📥 Load data from the Google Sheet
   async function loadSheetData() {
