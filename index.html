@@ -78,11 +78,15 @@
   background-color: #a6c8bb;     /* deep charcoal */
   border: 1px solid #3a3f46;     /* medium grey */
   color: #181515;                /* light text */
+
+  -webkit-appearance: none !important;   /* overrides iOS Safari */
+  appearance: none !important;
 }
 
 #searchInput::placeholder {
-  color: #0d270f; /* softer grey */
+  color: #b7b7b7 !important;             /* softer grey */
 }
+
 
 
   label {
@@ -394,31 +398,23 @@
   }
 
   // 🔁 Wire up events
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      applyFilters();
-    });
-  }
+if (searchInput) {
+  const triggerFilter = () => {
+    applyFilters();
+  };
 
-  if (cortsFilter) {
-    cortsFilter.addEventListener("change", () => {
-      applyFilters();
-    });
-  }
+  // Fire filters for a bunch of interaction types (better mobile support)
+  ["input", "keyup", "change", "search"].forEach((evt) => {
+    searchInput.addEventListener(evt, triggerFilter);
+  });
+}
 
-  // 🚀 On page load: fetch sheet, then show results
-  (async function init() {
-    try {
-      await loadSheetData();
-      applyFilters();
-    } catch (err) {
-      console.error("Error loading sheet:", err);
-      if (resultsContainer) {
-        resultsContainer.innerHTML =
-          "<p class='empty'>Error loading data from Google Sheets.</p>";
-      }
-    }
-  })();
+if (cortsFilter) {
+  cortsFilter.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
   </script>
 </body>
 </html>
