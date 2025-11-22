@@ -228,6 +228,33 @@
     margin-top: 1rem;
     font-family: 'Georgia', serif;
   }
+
+  /* Random Rec Button */
+  .random-btn {
+    float: right;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: 1.5px solid #000;
+    border-radius: 0.3rem;
+    background-color: var(--forest-green);
+    color: var(--antique-gold);
+    font-family: 'Georgia', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .random-btn:hover {
+    background-color: var(--emerald);
+    border-color: #000;
+  }
+
+  .random-btn:active {
+    transform: scale(0.98);
+  }
 </style>
 
 
@@ -240,9 +267,11 @@
   <div class="search-area">
     <label for="searchInput"><strong>Search</strong> (title, author, tags, etc.):</label><br />
     <input id="searchInput" type="text" placeholder="Start typing: drarry, coffee shop, author name..." />
-    <p style="font-size:0.9rem; color: var(--aged-paper); margin-top:0.35rem;">
+    <p style="font-size:0.9rem; color: var(--aged-paper); margin-top:0.35rem; margin-bottom: 0.75rem;">
       This search looks at Title, Author, Main Relationship, Summary, and Tags
     </p>
+    <button class="random-btn" id="randomBtn">🎲 random rec</button>
+    <div style="clear: both;"></div>
   </div>
 
   <div id="results"></div>
@@ -459,6 +488,26 @@ if (cortsFilter) {
     applyFilters();
   });
 }
+
+// 🎲 Random Rec Button
+const randomBtn = document.getElementById("randomBtn");
+if (randomBtn) {
+  randomBtn.addEventListener("click", () => {
+    if (!library.length) return;
+
+    // Clear search box
+    if (searchInput) {
+      searchInput.value = "";
+    }
+
+    // Get a random fic
+    const randomFic = library[Math.floor(Math.random() * library.length)];
+
+    // Show just this one fic
+    renderResults([randomFic]);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   await loadSheetData();
   applyFilters();
