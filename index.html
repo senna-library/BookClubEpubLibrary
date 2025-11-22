@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My AO3 EPUB Library</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    .search-area {
+      margin-bottom: 1rem;
+    }
+
+    #searchInput {
+      width: 100%;
+      max-width: 450px;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    #results {
+      margin-top: 1rem;
+    }
+
+    .fic {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .fic h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1.2rem;
+    }
+
+    .fic h2 a {
+      text-decoration: none;
+    }
+
+    .fic h2 a:hover {
+      text-decoration: underline;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1rem;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary {
+      margin: 0.25rem 0 0.5rem;
+    }
+
+    .tags {
+      margin-top: 0.25rem;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 0.1rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      margin: 0 0.25rem 0.25rem 0;
+      white-space: nowrap;
+    }
+
+    .corts {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #444;
+    }
+
+    .empty {
+      color: #777;
+      font-style: italic;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>BookClub EPUB Library</h1>
+  <div class="search-area">
+    <label for="searchInput"><strong>Search</strong> (title, author, tags, etc.):</label><br />
+    <input id="searchInput" type="text" placeholder="Start typing: drarry, coffee shop, author name..." />
+    <p style="font-size:0.9rem; color:#666; margin-top:0.35rem;">
+      This search looks at Title, Author, Main Relationship, Summary, Tags, and Corts Tiktok Recs.
+    </p>
+  </div>
+
+  <div id="results"></div>
+
+  <script>
+    // 🗂️ Your fic data lives here
+    // Start with a couple of examples. We can add the rest later.
+    const library = [ {
+  title: "A Darker Blue",
+  linkOnServer: "https://discord.com/channels/1112811873369333770/1396648436790464583/1397467579513307267",
+  author: "skitter",
+  words: 149009,
+  chapters: "28",
+  mainRelationship: "Hermione Granger/Draco Malfoy",
+  summary: `The War rages and leaves a trail of broken things in its wake. Swept out with the raging sea, Hermione and Draco must learn to live with themselves and each other. Violence begets violence in an endless loop that they will either break from or beneath. Survival is the goal but not necessarily the destination and regardless of private desires, they'll have no choice but to weather the storm together.`,
+  tags: [
+    "Hermione Granger/Draco Malfoy", "Hermione Granger", "Draco Malfoy", "Harry Potter",
+    "Alastor 'Mad-Eye' Moody", "Slow Burn", "Angst", "Wartime AU", "Post-Canon",
+    "Enemies to Friends to Lovers", "Emotional Hurt/Comfort",
+    "Implied/Referenced Alcohol Abuse/Alcoholism",
+    "okay technically it's Potions but you get the idea",
+    "Post-Traumatic Stress Disorder - PTSD",
+    "Other Additional Tags to Be Added", "POV First Person",
+    "alternating POV chapters", "Graphic Descriptions of Injuries",
+    "Over abundance of ocean metaphors", "Permanent Injury", "Loss of Limbs",
+    "well just the one limb and it's only a little gone", "F/M",
+    "Graphic Depictions Of Violence", "Suicidal Thoughts",
+    "Major Character Injury", "Character Study", "Forced Cohabitation",
+    "Eventual HEA", "Mutual Pining"
+  ],
+  cortsTiktokRecs: ""
+},
+{
+  title: "A Daughter of Dragons",
+  linkOnServer: "https://discord.com/chchannels/1112811873369333770/1396648436790464583/1413804574363353240",
+  author: "Deydralinne",
+  words: 2500,
+  chapters: "1",
+  mainRelationship: "Charlie Weasley/Ginny Weasley",
+  summary: `Lily is all grown up and it's time she carved her own path, Ginny, Harry, Charlie and George help get her settled into her new place. There's also something she has been meaning to say to Uncle Charlie…`,
+  tags: [
+    "Explicit", "Charlie Weasley/Ginny Weasley", "Harry Potter/George Weasley",
+    "Ginny Weasley", "Harry Potter", "Charlie Weasley", "George Weasley",
+    "Lily Luna Potter", "Original Characters", "sibling love child",
+    "Sibling Love", "its a fluffy family moment for Charlie and ginnys child",
+    "what can i say", "the weasleys are whores", "post a witch's flame",
+    "lily all grown up", "its okay they are soul mates", "cheeky one shot",
+    "F/M", "M/M", "Choose Not To Use Archive Warnings", "Incest",
+    "Weasley incest", "Sibling Incest", "ginny is married to harry",
+    "but harry is fucking george", "and ginny is fucking charlie",
+    "yes I mean her brother", "taboo fluff", "Is taboo fluff a thing?",
+    "It is now", "the previous work in the is series is about 10 years before this",
+    "that was a weird way of saying that", "sorry - Freeform", "not sorry"
+  ],
+  cortsTiktokRecs: ""
+},
+{
+  title: "A Different Kind of Magic",
+  linkOnServer: "https://discord.com/channels/1112811873369333770/1396648436790464583/1396730129010524230",
+  author: "maisey2k10",
+  words: 146928,
+  chapters: "36",
+  mainRelationship: "Hermione Granger/Fred Weasley/George Weasley",
+  summary: `Hermione’s secret is discovered by the Order of the Phoenix and she's in need of saving. With the help of Sirius, she learns to put the past behind her, and with the help of the Weasley Twins, they show her a happy future. But Hermione isn’t who she thinks she is, what she discovers will change both her life and the future of the Wizarding World for good.
+
+Rated for language, violence and sexual content. Triad fic! HGxFWxGW pairing! No Twincest! Soulmates! Powerful!Hermione! Some Ginny/Ron bashing.
+Written September 2016 - August 2017.`,
+  tags: [
+    "Hermione Granger/Fred Weasley/George Weasley", "Hermione Granger",
+    "Fred Weasley", "George Weasley", "Sirius Black", "Remus Lupin",
+    "Harry Potter", "Romance", "Family", "AU", "Humour", "Multi",
+    "Graphic Depictions Of Violence", "Major Character Death",
+    "Rape/Non-Con", "Underage", "Triad - Freeform", "Powerful! Hermione!",
+    "SOULMATES!", "Remus Lupin/Nymphadora Tonks", "Severus Snape",
+    "Albus Dumbledore", "Sexual Content", "bad language", "Violence",
+    "Threesome - F/M/M", "Implied/Referenced Sexual Assault",
+    "Implied Childhood Sexual Abuse", "Implied/Referenced Child Abuse",
+    "No Twincest!", "Ginny Bashing!", "Ron Bashing! He redeems himself!",
+    "Teen Pregnancy"
+  ],
+  cortsTiktokRecs: ""
+}
+
+      // 👉 Add more fics here, each one is a { ... } block separated by commas
+    ];
+
+    // 🔍 Helper to safely lowercase text
+    function normalize(value) {
+      return (value || "").toString().toLowerCase();
+    }
+
+    // 👀 Decide if a fic matches the search text
+    function matchesQuery(item, query) {
+      if (!query) return true; // if box is empty, show everything
+      const q = normalize(query);
+
+      return (
+        normalize(item.title).includes(q) ||
+        normalize(item.author).includes(q) ||
+        normalize(item.mainRelationship).includes(q) ||
+        normalize(item.summary).includes(q) ||
+        normalize((item.tags || []).join(" ")).includes(q) ||
+        normalize(item.cortsTiktokRecs).includes(q)
+      );
+    }
+
+    // 🖼️ Render the fic list into the page
+    function renderResults(items) {
+      const container = document.getElementById("results");
+
+      if (!items.length) {
+        container.innerHTML = '<p class="empty">No results. Try a different search term.</p>';
+        return;
+      }
+
+      const html = items.map(item => {
+        const titleHtml = item.linkOnServer
+          ? `<a href="${item.linkOnServer}" target="_blank" rel="noopener noreferrer">${item.title}</a>`
+          : item.title;
+
+        const tagsHtml = (item.tags && item.tags.length)
+          ? item.tags.map(t => `<span class="tag">${t}</span>`).join(" ")
+          : "";
+
+        const cortsHtml = item.cortsTiktokRecs
+          ? `<div class="corts">Cort's Tiktok Recs: ${item.cortsTiktokRecs}</div>`
+          : "";
+
+        return `
+          <article class="fic">
+            <h2>${titleHtml}</h2>
+            <div class="meta">
+              <span><strong>Author:</strong> ${item.author || "Unknown"}</span>
+              <span><strong>Words:</strong> ${item.words || "?"}</span>
+              <span><strong>Chapters:</strong> ${item.chapters || "?"}</span>
+              <span><strong>Main Relationship:</strong> ${item.mainRelationship || "—"}</span>
+            </div>
+            <p class="summary">${item.summary || ""}</p>
+            <div class="tags">${tagsHtml}</div>
+            ${cortsHtml}
+          </article>
+        `;
+      }).join("");
+
+      container.innerHTML = html;
+    }
+
+    // 🔁 Wire up the search box
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value;
+      const filtered = library.filter(item => matchesQuery(item, query));
+      renderResults(filtered);
+    });
+
+    // Show everything when the page first loads
+    renderResults(library);
+  </script>
+</body>
+</html>
