@@ -118,6 +118,18 @@ h1 {
   font-style: italic;
   color: #3a2430;                   /* deep plum text */
 }
+.cort-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  background-color: #0b5d1e; /* lighter evergreen so it pops */
+  color: #ffffff;            /* white text for contrast */
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
 
 /* "No results" / error state */
 .empty {
@@ -214,15 +226,7 @@ h1 {
        // Decide if this is a real Cort rec (not blank or "false")
      
     const rawCort = normalize(item.cortsTiktokRecs);   // lowercase version
-
-        // Only show if: value exists AND is not "false"
-    const isCortRec =
-        rawCort &&
-        rawCort !== "false" &&
-        rawCort !== "0" &&
-        rawCort !== "no";
-
-// Build the HTML if it's a Cort Rec
+    // // Build the HTML if it's a Cort Rec
             // ✅ Only show badge if the sheet value is TRUE
         const isCortRec =
           normalize(item.cortsTiktokRecs) === "true"; // treats "TRUE" / "true" as Cort Rec
