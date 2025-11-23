@@ -365,6 +365,95 @@
       var(--sage)
     );
   }
+
+  /* Tab Navigation */
+  .tab-navigation {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--sage);
+    padding-bottom: 0;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--aged-paper);
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    top: 2px;
+  }
+
+  .tab-btn:hover {
+    color: var(--antique-gold);
+    background: rgba(74, 124, 89, 0.1);
+  }
+
+  .tab-btn.active {
+    color: var(--antique-gold);
+    border-bottom-color: var(--antique-gold);
+    font-weight: 600;
+  }
+
+  /* Tab Content */
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Typeset Item Styling */
+  #typesets-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .typeset-item {
+    background: linear-gradient(
+      to bottom,
+      var(--forest-green),
+      var(--dark-brown)
+    );
+    border: 2px solid var(--sage);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(74, 124, 89, 0.2);
+  }
+
+  .typeset-item h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.3rem;
+    color: var(--antique-gold);
+    font-family: 'Georgia', serif;
+    font-weight: 600;
+  }
+
+  .typeset-item h3 a {
+    transition: all 0.2s ease;
+  }
+
+  .typeset-item h3 a:hover {
+    color: var(--parchment);
+    text-shadow: 0 0 8px rgba(201, 169, 97, 0.4);
+  }
 </style>
 
 
@@ -390,7 +479,16 @@
   <p style="margin-top: -0.4rem; margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--aged-paper); font-family: 'Georgia', serif;">
   Hosted by <strong style="color: var(--antique-gold);">Cort</strong>, <strong style="color: var(--antique-gold);">Dey</strong>, <strong style="color: var(--antique-gold);">Lexi</strong>, and <strong style="color: var(--antique-gold);">Senna</strong>
 </p>
-  <p class="library-count" id="libraryCount">Loading library...</p>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button class="tab-btn active" data-tab="library">Library</button>
+    <button class="tab-btn" data-tab="typesets">Typesets</button>
+  </div>
+
+  <!-- Library Tab Content -->
+  <div id="library-tab" class="tab-content active">
+    <p class="library-count" id="libraryCount">Loading library...</p>
   <div class="search-area">
     <label for="searchInput"><strong>Search</strong> (title, author, tags, etc.):</label><br />
     <input id="searchInput" type="text" placeholder="Start typing: drarry, coffee shop, author name..." />
@@ -413,6 +511,22 @@
   </div>
 
   <div id="results"></div>
+  </div>
+
+  <!-- Typesets Tab Content -->
+  <div id="typesets-tab" class="tab-content">
+    <h2 style="color: var(--antique-gold); margin-bottom: 1rem;">Typesets Collection</h2>
+    <p style="color: var(--aged-paper); margin-bottom: 1rem;">
+      Browse our collection of beautifully typeset PDFs. Click on any title to view or download.
+    </p>
+    <p style="color: var(--aged-paper); margin-bottom: 2rem;">
+      <strong style="color: var(--antique-gold);">⚠️ Personal Use Only:</strong> These are for personal use only. If I find out you are selling or distributing my typesets in any way that displeases me, I will hire an etsy witch to curse you. Proceed with caution. <span style="font-style: italic; font-size: 1.1em;">xoxo <span style="font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; font-size: 1.3em; color: var(--antique-gold);">Senna</span> 💚🐍</span>
+    </p>
+
+    <div id="typesets-list">
+      <!-- Typesets will be loaded dynamically -->
+    </div>
+  </div>
 
   <script>
   // 🔗 Your published Google Sheet (TSV)
@@ -704,6 +818,178 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderFeaturedLists();
   applyFilters();
 });
+
+// 📑 Tab Switching Functionality
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+// Password for Typesets tab
+const TYPESETS_PASSWORD = 'ChaosPuppy'; // Change this to your desired password
+let isTypesetsUnlocked = localStorage.getItem('typesetsUnlocked') === 'true';
+
+function switchTab(targetTab) {
+  // Check if trying to access Typesets tab
+  if (targetTab === 'typesets' && !isTypesetsUnlocked) {
+    const password = prompt('Enter password to access Typesets:');
+    if (password === TYPESETS_PASSWORD) {
+      isTypesetsUnlocked = true;
+      localStorage.setItem('typesetsUnlocked', 'true');
+    } else {
+      alert('Incorrect password');
+      return; // Don't switch tabs
+    }
+  }
+
+  // Remove active class from all buttons and contents
+  tabButtons.forEach(btn => btn.classList.remove('active'));
+  tabContents.forEach(content => content.classList.remove('active'));
+
+  // Add active class to target button and corresponding content
+  const targetButton = document.querySelector(`[data-tab="${targetTab}"]`);
+  const targetContent = document.getElementById(`${targetTab}-tab`);
+
+  if (targetButton && targetContent) {
+    targetButton.classList.add('active');
+    targetContent.classList.add('active');
+    // Save current tab to localStorage
+    localStorage.setItem('activeTab', targetTab);
+  }
+}
+
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const targetTab = button.getAttribute('data-tab');
+    switchTab(targetTab);
+  });
+});
+
+// Restore active tab on page load
+const savedTab = localStorage.getItem('activeTab');
+if (savedTab) {
+  switchTab(savedTab);
+}
+
+// 📚 Typesets Loader
+const typesets = [
+  'apostasy.Deydralinne.12sign.9pgs.ssbinding.pdf',
+  'bloodysluttypathetic.whatmurdah.11sign.8pgs.SSBinding.pdf',
+  'finding_hermione.Ebookdragon.23Sign.8Pgs.SSBinding.pdf',
+  'hinkypunk.inkjinx.Quatro.5sign.2pgs.ssbinding.pdf',
+  'keeper_of_the_moon.vol1.Stevie_Sunshine.16sign.7pgs.SSBinding.pdf',
+  'love.and.other.historical.accidents.pacificrimbaud.11sign.10pgs.SSBinding.pdf',
+  'ours_to_keep.Head_Over_Heels016.12Signs.7Pgs.SSBinding.pdf',
+  'pretty_boy.Bremonster.6Signs.10PgsSSBinding.pdf',
+  'secrets.and.masks.fullvolume.EmeraldSlytherin.40sign.8pgs.SSBinding.pdf',
+  'the.rights.and.wrongs.series.tandem.LovesBitca8.22sign.10pgs.SSBinding.pdf',
+  'this.bitter.earth.ikorous.33Sign.8Page.SSbinding.pdf',
+  'two.weddings.and.a.man.hunt.Quatro.Deydralinne.26sign.4pgs.SSBinding.pdf'
+];
+
+function parseTypesetFilename(filename) {
+  // Remove .pdf extension
+  const name = filename.replace('.pdf', '');
+  const parts = name.split('.');
+
+  // Extract title (everything before the author)
+  let title = '';
+  let author = '';
+  let signatures = '';
+  let pages = '';
+  let binding = '';
+  let bindingSize = '';
+
+  // Find where author name likely starts (look for capitalized word or before numbers)
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+
+    // Check if this part contains "sign" (signatures info)
+    if (part.toLowerCase().includes('sign')) {
+      signatures = part;
+      // Everything before this is title + author (and possibly binding size)
+      // Last word before signatures is likely author, but could be binding size
+      if (i > 0) {
+        const prevPart = parts[i - 1];
+        // Check if previous part is a binding size (Quatro, etc)
+        if (prevPart.toLowerCase() === 'quatro' || prevPart.toLowerCase() === 'folio' || prevPart.toLowerCase() === 'octavo') {
+          bindingSize = prevPart;
+          if (i > 1) {
+            author = parts[i - 2]; // Keep underscores for author names
+            title = parts.slice(0, i - 2).join(' ').replace(/_/g, ' ');
+          }
+        } else {
+          author = prevPart; // Keep underscores for author names
+          title = parts.slice(0, i - 1).join(' ').replace(/_/g, ' ');
+        }
+      }
+      // Get remaining info
+      if (i + 1 < parts.length) {
+        pages = parts[i + 1];
+      }
+      if (part.toLowerCase().includes('ssbinding') || (i + 2 < parts.length && parts[i + 2].toLowerCase().includes('ssbinding'))) {
+        binding = 'Senna Slytherin binding';
+      }
+      break;
+    }
+  }
+
+  // Parse signature count
+  const sigMatch = signatures.match(/(\d+)sign/i);
+  const sigCount = sigMatch ? sigMatch[1] : '';
+
+  // Parse pages
+  const pgsMatch = pages.match(/(\d+)pgs/i);
+  const pgsCount = pgsMatch ? pgsMatch[1] : '';
+
+  // Format title (capitalize words)
+  title = title.split(' ').map(word =>
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+
+  // Format binding size
+  if (bindingSize) {
+    bindingSize = bindingSize.charAt(0).toUpperCase() + bindingSize.slice(1);
+  }
+
+  return {
+    filename,
+    title: title || 'Untitled',
+    author: author || 'Unknown Author',
+    signatures: sigCount,
+    pages: pgsCount,
+    binding,
+    bindingSize
+  };
+}
+
+function renderTypesets() {
+  const container = document.getElementById('typesets-list');
+  if (!container) return;
+
+  const html = typesets.map(filename => {
+    const info = parseTypesetFilename(filename);
+
+    let metaParts = [];
+    if (info.bindingSize) metaParts.push(info.bindingSize);
+    if (info.signatures) metaParts.push(`${info.signatures} signatures`);
+    if (info.pages) metaParts.push(`${info.pages} pages per signature`);
+    if (info.binding) metaParts.push(info.binding);
+
+    const metaText = metaParts.join(' • ');
+
+    return `
+      <div class="typeset-item">
+        <h3><a href="typesets/${info.filename}" target="_blank">${info.title}</a></h3>
+        <p class="meta" style="margin-top: 0; margin-bottom: 0.5rem;">by ${info.author}</p>
+        <p class="meta">${metaText}</p>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+}
+
+// Load typesets when page loads
+renderTypesets();
 
   </script>
 </body>
