@@ -130,13 +130,30 @@
     box-shadow: 0 0 0 2px rgba(201, 169, 97, 0.3);
   }
 
+  select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--sage);
+    background-color: #2a3d34;
+    color: var(--parchment);
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+  }
+
+  select:focus {
+    outline: none;
+    border-color: var(--antique-gold);
+    box-shadow: 0 0 0 2px rgba(201, 169, 97, 0.3);
+  }
+
   /* fic result card */
   .fic {
   position: relative; /* for absolute positioning of badge */
   background: #c8e4d4;
   border: 2px solid #8fb89a;
   border-radius: 0.5rem;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.5rem 1.25rem;
   margin-bottom: 1.25rem;
 
   box-shadow:
@@ -201,13 +218,13 @@
   /* Cort rec badge */
   .corts {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
+    top: 0.25rem;
+    right: 0.5rem;
   }
 
   .cort-badge {
     display: block;
-    max-width: 55px;
+    max-width: 70px;
     height: auto;
   }
 
@@ -499,8 +516,56 @@
     <p style="font-size:0.9rem; color: var(--aged-paper); margin-top:0.35rem; margin-bottom: 0.75rem;">
       This search looks at Title, Author, Main Relationship, Summary, and Tags
     </p>
-    <button class="random-btn" id="randomBtn">🎲 random rec</button>
-    <div style="clear: both;"></div>
+
+    <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 150px;">
+        <label for="wordCountFilter" style="font-size: 0.85rem;"><strong>Word Count:</strong></label>
+        <select id="wordCountFilter" style="width: 100%; font-size: 0.75rem;">
+          <option value="all">All</option>
+          <option value="under20k">Under 20k</option>
+          <option value="20k-50k">20k - 50k</option>
+          <option value="50k-100k">50k - 100k</option>
+          <option value="100k-200k">100k - 200k</option>
+          <option value="over200k">Over 200k</option>
+        </select>
+      </div>
+
+      <div style="flex: 1; min-width: 150px;">
+        <label for="relationshipFilter" style="font-size: 0.85rem;"><strong>Relationship:</strong></label>
+        <select id="relationshipFilter" style="width: 100%; font-size: 0.75rem;">
+          <option value="all">All</option>
+          <option value="dramione">Dramione</option>
+          <option value="drarry">Drarry</option>
+          <option value="pansmione">Pansmione</option>
+          <option value="theomione">Theomione</option>
+          <option value="tomione">Tomione</option>
+          <option value="pansville">Pansville</option>
+          <option value="nottpott">NottPott</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div style="flex: 1; min-width: 150px;">
+        <label for="tropeFilter" style="font-size: 0.85rem;"><strong>Tag:</strong></label>
+        <select id="tropeFilter" style="width: 100%; font-size: 0.75rem;">
+          <option value="all">All</option>
+          <!-- Popular tags will be added dynamically -->
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top: 0.75rem;">
+      <label style="display: inline-flex; align-items: center; cursor: pointer;">
+        <input type="checkbox" id="cortRecsFilter" style="width: auto; margin-right: 0.5rem; cursor: pointer;" />
+        <strong>Cort Recs Only</strong>
+      </label>
+    </div>
+
+    <div style="margin-top: 0.75rem;">
+      <button class="random-btn" id="randomBtn" style="float: left; margin-right: 0.5rem;">🎲 random rec</button>
+      <button class="random-btn" id="clearBtn">✕ clear filters</button>
+      <div style="clear: both;"></div>
+    </div>
   </div>
 
   <!-- Featured Lists -->
@@ -514,6 +579,7 @@
     <div id="nonDramioneList"></div>
   </div>
 
+  <div id="resultsCount" style="color: var(--aged-paper); margin-bottom: 1rem; font-style: italic;"></div>
   <div id="results"></div>
   </div>
 
@@ -544,6 +610,84 @@
   const resultsContainer = document.getElementById("results");
   const searchInput = document.getElementById("searchInput");
   const cortsFilter = document.getElementById("cortsFilter"); // ok if this doesn't exist
+  const wordCountFilter = document.getElementById("wordCountFilter");
+  const relationshipFilter = document.getElementById("relationshipFilter");
+  const cortRecsFilter = document.getElementById("cortRecsFilter");
+  const tropeFilter = document.getElementById("tropeFilter");
+
+  // Tags to exclude from trope filter
+  const EXCLUDED_FROM_TROPES = new Set([
+    'f/m', 'm/m', 'f/f', 'm/f',
+    'no archive warnings apply',
+    'choose not to use archive warnings',
+    'explicit sexual content',
+    'graphic depictions of violence',
+    'major character death',
+    'rape/non-con',
+    'underage'
+  ]);
+
+  // Character first names for filtering
+  const CHARACTER_FIRST_NAMES = new Set([
+    'harry', 'hermione', 'draco', 'ron', 'ginny', 'luna', 'neville',
+    'pansy', 'theo', 'blaise', 'daphne', 'astoria', 'lavender', 'parvati',
+    'tom', 'voldemort', 'snape', 'severus', 'lucius', 'narcissa',
+    'sirius', 'remus', 'james', 'lily', 'albus', 'dumbledore', 'minerva',
+    'tonks', 'fleur', 'bill', 'charlie', 'fred', 'george', 'percy',
+    'hagrid', 'dobby', 'kreacher', 'fenrir', 'bellatrix', 'regulus',
+    'cedric', 'viktor', 'cho', 'dean', 'seamus', 'colin', 'dennis',
+    'molly', 'arthur', 'andromeda', 'ted', 'horace', 'gilderoy',
+    'quirinus', 'mad-eye', 'barty', 'myrtle', 'moaning',
+    'peeves', 'argus', 'sybill', 'gellert', 'newt', 'credence',
+    'nagini', 'queenie', 'tina', 'jacob', 'theseus', 'scorpius'
+  ]);
+
+  const CHARACTER_LAST_NAMES = new Set([
+    'potter', 'granger', 'weasley', 'malfoy', 'lovegood', 'longbottom',
+    'parkinson', 'nott', 'zabini', 'greengrass', 'patil', 'brown',
+    'riddle', 'snape', 'dumbledore', 'mcgonagall', 'black', 'lupin',
+    'tonks', 'delacour', 'diggory', 'krum', 'chang', 'thomas', 'finnigan',
+    'creevey', 'prewett', 'lestrange', 'crouch', 'moody', 'filch',
+    'trelawney', 'slughorn', 'lockhart', 'quirrell', 'grindelwald',
+    'scamander', 'goldstein', 'umbridge', 'fudge', 'shacklebolt',
+    'vance', 'bones', 'abbott', 'macmillan', 'smith', 'corner',
+    'boot', 'turpin', 'brocklehurst', 'carrow', 'yaxley', 'dolohov',
+    'rookwood', 'avery', 'mulciber', 'rosier', 'wilkes', 'travers'
+  ]);
+
+  // Check if a tag is JUST a character name (without descriptors)
+  function isPlainCharacterName(tag) {
+    const normalized = tag.toLowerCase().trim();
+    const words = normalized.split(/\s+/);
+
+    // Single word - check if it's a known first name
+    if (words.length === 1) {
+      return CHARACTER_FIRST_NAMES.has(words[0]);
+    }
+
+    // Two words - check if it's "FirstName LastName"
+    if (words.length === 2) {
+      const [first, last] = words;
+      if (CHARACTER_FIRST_NAMES.has(first) && CHARACTER_LAST_NAMES.has(last)) {
+        return true;
+      }
+      // Also check for two first names like "Harry Ron"
+      if (CHARACTER_FIRST_NAMES.has(first) && CHARACTER_FIRST_NAMES.has(last)) {
+        return true;
+      }
+    }
+
+    // Three words - check if it's "FirstName MiddleName LastName"
+    if (words.length === 3) {
+      const [first, middle, last] = words;
+      if ((CHARACTER_FIRST_NAMES.has(first) || CHARACTER_FIRST_NAMES.has(middle)) &&
+          CHARACTER_LAST_NAMES.has(last)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   // 🧹 Safely lowercase text
   function normalize(value) {
@@ -565,18 +709,108 @@
     );
   }
 
-  // (optional) extra filtering for Cort's recs, if you add a dropdown
+  // (optional) extra filtering for Cort's recs
   function matchesCortsFilter(item) {
+    // Check the checkbox filter
+    if (cortRecsFilter && cortRecsFilter.checked) {
+      // Treat anything not FALSE/empty as a rec
+      return normalize(item.cortsTiktokRecs) && normalize(item.cortsTiktokRecs) !== "false";
+    }
+
+    // Legacy dropdown support (if it exists)
     if (!cortsFilter || !cortsFilter.value || cortsFilter.value === "all") {
       return true;
     }
 
     if (cortsFilter.value === "corts-only") {
-      // Treat anything not FALSE/empty as a rec
       return normalize(item.cortsTiktokRecs) && normalize(item.cortsTiktokRecs) !== "false";
     }
 
     return true;
+  }
+
+  // 📊 Word count filter
+  function matchesWordCountFilter(item) {
+    if (!wordCountFilter || !wordCountFilter.value || wordCountFilter.value === "all") {
+      return true;
+    }
+
+    // Parse word count from string (e.g., "123,456" or "123456")
+    const wordCount = parseInt((item.words || "").replace(/,/g, ""));
+    if (isNaN(wordCount)) return false;
+
+    const filter = wordCountFilter.value;
+    if (filter === "under20k") return wordCount < 20000;
+    if (filter === "20k-50k") return wordCount >= 20000 && wordCount < 50000;
+    if (filter === "50k-100k") return wordCount >= 50000 && wordCount < 100000;
+    if (filter === "100k-200k") return wordCount >= 100000 && wordCount < 200000;
+    if (filter === "over200k") return wordCount >= 200000;
+
+    return true;
+  }
+
+  // 💕 Relationship filter
+  function matchesRelationshipFilter(item) {
+    if (!relationshipFilter || !relationshipFilter.value || relationshipFilter.value === "all") {
+      return true;
+    }
+
+    const filter = relationshipFilter.value;
+
+    // Split by comma to get individual pairings (e.g., "Hermione/Draco, Pansy/Harry")
+    const relationships = (item.mainRelationship || "").split(",").map(r => r.trim());
+
+    // Check if any of the pairings match the selected filter
+    return relationships.some(rel => {
+      const relLower = normalize(rel);
+
+      if (filter === "dramione") {
+        return relLower.includes("draco") && relLower.includes("hermione");
+      }
+      if (filter === "drarry") {
+        return relLower.includes("draco") && relLower.includes("harry");
+      }
+      if (filter === "pansmione") {
+        return relLower.includes("pansy") && relLower.includes("hermione");
+      }
+      if (filter === "theomione") {
+        return relLower.includes("theo") && relLower.includes("hermione");
+      }
+      if (filter === "tomione") {
+        return relLower.includes("tom") && relLower.includes("hermione");
+      }
+      if (filter === "pansville") {
+        return relLower.includes("pansy") && relLower.includes("neville");
+      }
+      if (filter === "nottpott") {
+        return relLower.includes("theo") && relLower.includes("harry");
+      }
+      if (filter === "other") {
+        // Check if this specific pairing is NOT one of the common ships
+        const isDramione = relLower.includes("draco") && relLower.includes("hermione");
+        const isDrarry = relLower.includes("draco") && relLower.includes("harry");
+        const isPansmione = relLower.includes("pansy") && relLower.includes("hermione");
+        const isTheomione = relLower.includes("theo") && relLower.includes("hermione");
+        const isTomione = relLower.includes("tom") && relLower.includes("hermione");
+        const isPansville = relLower.includes("pansy") && relLower.includes("neville");
+        const isNottPott = relLower.includes("theo") && relLower.includes("harry");
+        return !isDramione && !isDrarry && !isPansmione && !isTheomione && !isTomione && !isPansville && !isNottPott;
+      }
+
+      return false;
+    });
+  }
+
+  // 🏷️ Trope filter
+  function matchesTropeFilter(item) {
+    if (!tropeFilter || !tropeFilter.value || tropeFilter.value === "all") {
+      return true;
+    }
+
+    const selectedTrope = tropeFilter.value.toLowerCase();
+    const itemTags = (item.tags || []).map(t => normalize(t));
+
+    return itemTags.includes(selectedTrope);
   }
 
   // 🎭 Check if fic is Dramione
@@ -628,7 +862,7 @@
     const isCortRec = cortValue === "true";
 
     const cortsHtml = isCortRec
-      ? `<div class="corts"><img src="images/cortrec.png" alt="Cort Rec" class="cort-badge"></div>`
+      ? `<div class="corts"><img src="images/cortrec-darkgreen-transparent-cropped.png" alt="Cort Rec" class="cort-badge"></div>`
       : "";
 
     return `
@@ -651,14 +885,23 @@
   function renderResults(items) {
     if (!resultsContainer) return;
 
+    const resultsCountEl = document.getElementById("resultsCount");
+
     if (!items.length) {
       resultsContainer.innerHTML =
         '<p class="empty">No results. Try a different search term.</p>';
+      if (resultsCountEl) resultsCountEl.innerHTML = "";
       return;
     }
 
     const html = items.map(item => renderFicCard(item)).join("");
     resultsContainer.innerHTML = html;
+
+    // Update results count
+    if (resultsCountEl) {
+      const countText = items.length === 1 ? "1 result" : `${items.length} results`;
+      resultsCountEl.innerHTML = countText;
+    }
   }
   // 🎲 Pick up to "count" random items from an array
   function getRandomItems(items, count) {
@@ -673,7 +916,7 @@
     return copy.slice(0, Math.min(count, copy.length));
   }
 
-  // 🔎 Apply search + Cort's filter to the library and show results
+  // 🔎 Apply search + Cort's filter + word count filter to the library and show results
   function applyFilters() {
     if (!library.length) {
       // no data yet
@@ -686,24 +929,34 @@
     const query = searchInput ? searchInput.value.trim() : "";
     const dramioneSection = document.querySelector(".dramione-section");
     const nonDramioneSection = document.querySelector(".non-dramione-section");
+    const hasWordCountFilter = wordCountFilter && wordCountFilter.value !== "all";
+    const hasRelationshipFilter = relationshipFilter && relationshipFilter.value !== "all";
+    const hasCortRecsFilter = cortRecsFilter && cortRecsFilter.checked;
+    const hasTropeFilter = tropeFilter && tropeFilter.value !== "all";
 
-    // Always respect the Cort's filter first (if you use it)
-    let filtered = library.filter((item) => matchesCortsFilter(item));
+    // Always respect all filters first
+    let filtered = library.filter((item) => matchesCortsFilter(item) && matchesWordCountFilter(item) && matchesRelationshipFilter(item) && matchesTropeFilter(item));
 
-    if (query) {
-      // If there's a search term: hide buddy read sections and show search results
+    if (query || hasWordCountFilter || hasRelationshipFilter || hasCortRecsFilter || hasTropeFilter) {
+      // If there's a search term or any filter: hide buddy read sections and show search results
       if (dramioneSection) dramioneSection.style.display = "none";
       if (nonDramioneSection) nonDramioneSection.style.display = "none";
 
-      filtered = filtered.filter((item) => matchesQuery(item, query));
+      if (query) {
+        filtered = filtered.filter((item) => matchesQuery(item, query));
+      }
       renderResults(filtered);
     } else {
-      // If search box is empty: show buddy read sections and show 5 random fics
+      // If search box is empty and no filters: show buddy read sections and show 5 random fics
       if (dramioneSection) dramioneSection.style.display = "block";
       if (nonDramioneSection) nonDramioneSection.style.display = "block";
 
       const randomFive = getRandomItems(filtered, 5);
       renderResults(randomFive);
+
+      // Clear the count display when showing default view
+      const resultsCountEl = document.getElementById("resultsCount");
+      if (resultsCountEl) resultsCountEl.innerHTML = "";
     }
   }
 
@@ -772,6 +1025,47 @@
     if (libraryCountEl) {
       libraryCountEl.innerHTML = `Our library contains <strong>${library.length}</strong> ${library.length === 1 ? 'fic' : 'fics'}`;
     }
+
+    // Populate trope filter with top 15 tropes
+    populateTropeFilter();
+  }
+
+  // 🏷️ Populate the trope filter dropdown with top 15 tropes
+  function populateTropeFilter() {
+    if (!tropeFilter || !library.length) return;
+
+    // Count all tags, excluding archive warnings, relationship types, and plain character names
+    const tagCounts = {};
+
+    library.forEach(item => {
+      (item.tags || []).forEach(tag => {
+        if (!tag) return;
+        const normalized = normalize(tag);
+
+        // Skip excluded tags (archive warnings, relationship types)
+        if (EXCLUDED_FROM_TROPES.has(normalized)) return;
+
+        // Skip plain character names (but keep descriptive tags like "BAMF Hermione Granger")
+        if (isPlainCharacterName(tag)) return;
+
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    });
+
+    // Sort by count and get top 15
+    const topTropes = Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15);
+
+    // Add options to dropdown
+    topTropes.forEach(([tag, count]) => {
+      const option = document.createElement('option');
+      option.value = tag.toLowerCase();
+      option.textContent = `${tag} (${count})`;
+      tropeFilter.appendChild(option);
+    });
+
+    console.log('Top 15 tropes loaded:', topTropes.map(([tag]) => tag));
   }
 
   // 🔁 Wire up events
@@ -792,13 +1086,37 @@ if (cortsFilter) {
   });
 }
 
+if (wordCountFilter) {
+  wordCountFilter.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
+if (relationshipFilter) {
+  relationshipFilter.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
+if (cortRecsFilter) {
+  cortRecsFilter.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
+if (tropeFilter) {
+  tropeFilter.addEventListener("change", () => {
+    applyFilters();
+  });
+}
+
 // 🎲 Random Rec Button
 const randomBtn = document.getElementById("randomBtn");
 if (randomBtn) {
   randomBtn.addEventListener("click", () => {
     if (!library.length) return;
 
-    // Clear search box
+    // Clear search box but keep filters
     if (searchInput) {
       searchInput.value = "";
     }
@@ -809,11 +1127,48 @@ if (randomBtn) {
     if (dramioneSection) dramioneSection.style.display = "none";
     if (nonDramioneSection) nonDramioneSection.style.display = "none";
 
-    // Get a random fic
-    const randomFic = library[Math.floor(Math.random() * library.length)];
+    // Apply filters to library before getting random fic
+    let filtered = library.filter((item) => matchesCortsFilter(item) && matchesWordCountFilter(item) && matchesRelationshipFilter(item) && matchesTropeFilter(item));
+
+    // Get a random fic from filtered results
+    const randomFic = filtered[Math.floor(Math.random() * filtered.length)];
 
     // Show just this one fic
     renderResults([randomFic]);
+  });
+}
+
+// ✕ Clear Filters Button
+const clearBtn = document.getElementById("clearBtn");
+if (clearBtn) {
+  clearBtn.addEventListener("click", () => {
+    // Clear search box
+    if (searchInput) {
+      searchInput.value = "";
+    }
+    // Reset word count filter
+    if (wordCountFilter) {
+      wordCountFilter.value = "all";
+    }
+    // Reset relationship filter
+    if (relationshipFilter) {
+      relationshipFilter.value = "all";
+    }
+    // Reset trope filter
+    if (tropeFilter) {
+      tropeFilter.value = "all";
+    }
+    // Reset cort's filter if it exists
+    if (cortsFilter) {
+      cortsFilter.value = "all";
+    }
+    // Uncheck Cort Recs checkbox
+    if (cortRecsFilter) {
+      cortRecsFilter.checked = false;
+    }
+
+    // Reapply filters (which will show buddy read sections and random 5 fics)
+    applyFilters();
   });
 }
 
