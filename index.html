@@ -133,47 +133,44 @@
   /* fic result card */
   .fic {
   position: relative; /* for absolute positioning of badge */
-  background: linear-gradient(
-    to bottom,
-    var(--forest-green),
-    var(--dark-brown)
-  );
-  border: 2px solid var(--sage);
+  background: #c8e4d4;
+  border: 2px solid #8fb89a;
   border-radius: 0.5rem;
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.25rem;
 
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(74, 124, 89, 0.2);
-  color: var(--parchment);
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: #2a2a2a;
 }
 
 .fic h2 {
   margin: 0 0 0.5rem;
   font-size: 1.4rem;
-  color: var(--antique-gold);
+  color: var(--deep-gold);
   font-family: 'Georgia', serif;
   font-weight: 600;
 }
 
 .fic h2 a {
   transition: all 0.2s ease;
+  color: var(--deep-gold);
 }
 
 .fic h2 a:hover {
-  color: var(--parchment);
-  text-shadow: 0 0 8px rgba(201, 169, 97, 0.4);
+  color: var(--antique-gold);
+  text-shadow: none;
 }
 
 .summary {
-  color: var(--aged-paper);
-  font-style: italic;
+  color: #3a3a3a;
+  font-style: normal;
   line-height: 1.6;
 }
 
 .meta {
-  color: var(--aged-paper);
+  color: #4a4a4a;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
@@ -194,7 +191,7 @@
 
   background-color: var(--forest-green);
   color: var(--antique-gold);
-  border: 1px solid var(--sage);
+  border: 1px solid #2a2a2a;
   font-family: 'Georgia', serif;
   text-transform: lowercase;
   letter-spacing: 0.02em;
@@ -454,6 +451,10 @@
     color: var(--parchment);
     text-shadow: 0 0 8px rgba(201, 169, 97, 0.4);
   }
+
+  .typeset-item .meta {
+    color: var(--aged-paper);
+  }
 </style>
 
 
@@ -476,8 +477,11 @@
   </div>
 
   <h1>Book Club EPUB Library</h1>
-  <p style="margin-top: -0.4rem; margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--aged-paper); font-family: 'Georgia', serif;">
+  <p style="margin-top: -0.4rem; margin-bottom: 0.25rem; font-size: 0.95rem; color: var(--aged-paper); font-family: 'Georgia', serif;">
   Hosted by <strong style="color: var(--antique-gold);">Cort</strong>, <strong style="color: var(--antique-gold);">Dey</strong>, <strong style="color: var(--antique-gold);">Lexi</strong>, and <strong style="color: var(--antique-gold);">Senna</strong>
+</p>
+  <p style="margin-top: 0; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--aged-paper); font-family: 'Georgia', serif;">
+  Join our <a href="https://discord.com/invite/VTf22WVV4w" target="_blank" rel="noopener noreferrer">Book Club Discord</a>. Where we get up to all kinds of Dramione Shenanigans
 </p>
 
   <!-- Tab Navigation -->
@@ -879,10 +883,13 @@ const typesets = [
   'love.and.other.historical.accidents.pacificrimbaud.11sign.10pgs.SSBinding.pdf',
   'ours_to_keep.Head_Over_Heels016.12Signs.7Pgs.SSBinding.pdf',
   'pretty_boy.Bremonster.6Signs.10PgsSSBinding.pdf',
+  'remain_nameless.HeyJude19.18sign.9pgs.SSbinding.pdf',
   'secrets.and.masks.fullvolume.EmeraldSlytherin.40sign.8pgs.SSBinding.pdf',
   'the.rights.and.wrongs.series.tandem.LovesBitca8.22sign.10pgs.SSBinding.pdf',
+  'the.rights.and.wrongs.series.tandem.vol.1.LovesBitca8.12sign.9pgs.SSBinding.pdf',
+  'the.rights.and.wrongs.series.tandem.vol.2.LovesBitca.19sign.6pgs.SSBinding.pdf',
   'this.bitter.earth.ikorous.33Sign.8Page.SSbinding.pdf',
-  'two.weddings.and.a.man.hunt.Quatro.Deydralinne.26sign.4pgs.SSBinding.pdf'
+  'two.weddings.and.a.man.hunt.Deydralinne.Quatro.13sign.4pgs.SSBinding.pdf'
 ];
 
 function parseTypesetFilename(filename) {
