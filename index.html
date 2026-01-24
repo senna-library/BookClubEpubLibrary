@@ -276,73 +276,108 @@
     transform: scale(0.98);
   }
 
-  /* Christmas Lights */
-  .christmas-lights {
+  /* Valentine Dark Mark Theme */
+  .valentine-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 40px;
+    height: 45px;
     display: flex;
     justify-content: space-around;
-    align-items: flex-end;
-    padding: 0 2rem;
+    align-items: center;
+    padding: 0 1rem;
     z-index: 1000;
-    background: transparent;
+    background: linear-gradient(180deg, rgba(26, 37, 32, 0.95) 0%, transparent 100%);
   }
 
-  .light {
-    width: 12px;
-    height: 16px;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  .valentine-item {
+    font-size: 1.2rem;
     position: relative;
-    animation: twinkle 1.5s infinite;
+    animation: float 3s ease-in-out infinite;
   }
 
-  .light::before {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 8px;
-    background: #333;
+  /* Hearts */
+  .heart {
+    color: #e84a5f;
+    text-shadow: 0 0 10px rgba(232, 74, 95, 0.6);
+    animation: heartbeat 1.5s ease-in-out infinite;
   }
 
-  .light.red {
-    background: radial-gradient(circle, #ff4444, #cc0000);
-    box-shadow: 0 0 10px #ff4444;
-    animation-delay: 0s;
+  .heart.pink {
+    color: #ff6b9d;
+    text-shadow: 0 0 10px rgba(255, 107, 157, 0.6);
+    animation-delay: 0.2s;
   }
 
-  .light.green {
-    background: radial-gradient(circle, #44ff44, #00cc00);
-    box-shadow: 0 0 10px #44ff44;
-    animation-delay: 0.3s;
+  .heart.deep {
+    color: #c23a5a;
+    text-shadow: 0 0 10px rgba(194, 58, 90, 0.6);
+    animation-delay: 0.4s;
   }
 
-  .light.yellow {
-    background: radial-gradient(circle, #ffff44, #ffcc00);
-    box-shadow: 0 0 10px #ffff44;
-    animation-delay: 0.6s;
+  /* Dark Mark - Skull with snake aesthetic */
+  .dark-mark {
+    color: var(--sage);
+    text-shadow: 0 0 12px rgba(74, 124, 89, 0.8);
+    animation: darkPulse 2.5s ease-in-out infinite;
+    font-size: 1.1rem;
   }
 
-  .light.blue {
-    background: radial-gradient(circle, #4444ff, #0000cc);
-    box-shadow: 0 0 10px #4444ff;
-    animation-delay: 0.9s;
+  .dark-mark.glow {
+    color: var(--antique-gold);
+    text-shadow: 0 0 15px rgba(201, 169, 97, 0.7);
+    animation-delay: 0.5s;
   }
 
-  @keyframes twinkle {
+  @keyframes heartbeat {
     0%, 100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    15% {
+      transform: scale(1.15);
       opacity: 1;
+    }
+    30% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+    45% {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes darkPulse {
+    0%, 100% {
+      opacity: 0.7;
       filter: brightness(1);
     }
     50% {
-      opacity: 0.4;
-      filter: brightness(0.6);
+      opacity: 1;
+      filter: brightness(1.3);
     }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  /* Stagger the float animation */
+  .valentine-item:nth-child(odd) {
+    animation-delay: 0s;
+  }
+  .valentine-item:nth-child(even) {
+    animation-delay: 1.5s;
+  }
+  .valentine-item:nth-child(3n) {
+    animation-duration: 2.5s;
   }
 
   /* Featured Lists */
@@ -477,20 +512,21 @@
 
 </head>
 <body>
-  <!-- Christmas Lights -->
-  <div class="christmas-lights">
-    <div class="light red"></div>
-    <div class="light green"></div>
-    <div class="light yellow"></div>
-    <div class="light blue"></div>
-    <div class="light red"></div>
-    <div class="light green"></div>
-    <div class="light yellow"></div>
-    <div class="light blue"></div>
-    <div class="light red"></div>
-    <div class="light green"></div>
-    <div class="light yellow"></div>
-    <div class="light blue"></div>
+  <!-- Valentine Dark Mark Theme -->
+  <div class="valentine-header">
+    <span class="valentine-item heart">♥</span>
+    <span class="valentine-item dark-mark">☠</span>
+    <span class="valentine-item heart pink">♥</span>
+    <span class="valentine-item dark-mark glow">🐍</span>
+    <span class="valentine-item heart deep">♥</span>
+    <span class="valentine-item dark-mark">☠</span>
+    <span class="valentine-item heart">♥</span>
+    <span class="valentine-item dark-mark glow">🐍</span>
+    <span class="valentine-item heart pink">♥</span>
+    <span class="valentine-item dark-mark">☠</span>
+    <span class="valentine-item heart deep">♥</span>
+    <span class="valentine-item dark-mark glow">🐍</span>
+    <span class="valentine-item heart">♥</span>
   </div>
 
   <h1>Book Club EPUB Library</h1>
