@@ -681,7 +681,16 @@ function populateTropeFilter() {
 // Events
 // ---------------------------------------------------------------------------
 
-searchInput.addEventListener("input", debounce(applyFilters, 150));
+// Typing must never lose focus on phones: apply after a short pause and
+// put focus back if the re-render cost us the keyboard.
+const applySearch = debounce(() => {
+  const hadFocus = document.activeElement === searchInput;
+  applyFilters();
+  if (hadFocus && document.activeElement !== searchInput) {
+    searchInput.focus({ preventScroll: true });
+  }
+}, 300);
+searchInput.addEventListener("input", applySearch);
 [wordCountFilter, relationshipFilter, tropeFilter, cortRecsFilter].forEach((el) => {
   el.addEventListener("change", applyFilters);
 });
