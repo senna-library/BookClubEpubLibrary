@@ -37,6 +37,7 @@
       <nav class="tab-navigation" role="tablist" aria-label="Site sections">
         <button class="tab-btn" role="tab" id="tab-library" aria-controls="library-tab" aria-selected="true" data-tab="library">Library</button>
         <button class="tab-btn" role="tab" id="tab-typesets" aria-controls="typesets-tab" aria-selected="false" tabindex="-1" data-tab="typesets">Typesets</button>
+        <button class="tab-btn" role="tab" id="tab-backup" aria-controls="backup-tab" aria-selected="false" tabindex="-1" data-tab="backup">Backup Check</button>
       </nav>
     </div>
 
@@ -122,6 +123,23 @@
         <ul class="not-shared-list" id="notSharedList"></ul>
       </details>
     </main>
+
+    <!-- Backup check -->
+    <section id="backup-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-backup">
+      <div class="typesets-intro">
+        <h2>Backup Check</h2>
+        <p>Looking for a fic? Search the title or author to see whether it’s in our backup library. This only tells you if we have it; it isn’t a download.</p>
+      </div>
+      <section class="search-area" aria-label="Search the backup library">
+        <label class="visually-hidden" for="backupSearch">Search the backup library</label>
+        <div class="search-field">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+          <input id="backupSearch" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Title or author" />
+        </div>
+      </section>
+      <p class="library-count" id="backupStatus" aria-live="polite"></p>
+      <ul class="backup-results" id="backupResults"></ul>
+    </section>
 
     <!-- Typesets -->
     <section id="typesets-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-typesets">

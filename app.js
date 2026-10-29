@@ -780,6 +780,7 @@ function switchTab(targetTab) {
 
   localStorage.setItem("activeTab", targetTab);
   if (targetTab === "library") updateClampButtons();
+  if (targetTab === "backup") loadBackupIndex();
   return true;
 }
 
@@ -917,3 +918,53 @@ $("notSharedList").innerHTML = NOT_SHARED.map((e) => `
   <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}</li>
 `).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
+
+// ---------------------------------------------------------------------------
+// Backup check: is a fic in the backup library? (backup-index.json is built
+// from the library's file names; it holds titles and authors only)
+// ---------------------------------------------------------------------------
+
+const backupSearch = document.getElementById("backupSearch");
+const backupStatus = document.getElementById("backupStatus");
+const backupResults = document.getElementById("backupResults");
+let backupIndex = null;
+
+function backupKey(value) {
+  return normalize(value).normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+async function loadBackupIndex() {
+  if (backupIndex) return;
+  backupStatus.textContent = "Loading the backup list…";
+  try {
+    const res = await fetch("backup-index.json");
+    if (!res.ok) throw new Error(res.status);
+    backupIndex = (await res.json()).map((r) => ({ ...r, key: backupKey(`${r.t} ${r.a}`) }));
+    backupStatus.textContent = `${backupIndex.length.toLocaleString()} fics in the backup library.`;
+    runBackupSearch();
+  } catch (err) {
+    backupStatus.textContent = "Couldn’t load the backup list. Try again in a bit.";
+  }
+}
+
+function runBackupSearch() {
+  if (!backupIndex) return;
+  const words = backupKey(backupSearch.value).split(" ").filter(Boolean);
+  if (!words.length) {
+    backupResults.innerHTML = "";
+    backupStatus.textContent = `${backupIndex.length.toLocaleString()} fics in the backup library.`;
+    return;
+  }
+  const hits = backupIndex.filter((r) => words.every((w) => r.key.includes(w)));
+  if (!hits.length) {
+    backupResults.innerHTML = "";
+    backupStatus.textContent = "No, we don’t have that one in the backup library.";
+    return;
+  }
+  backupStatus.textContent = `Yes! ${hits.length.toLocaleString()} match${hits.length === 1 ? "" : "es"}${hits.length > 50 ? " (showing the first 50)" : ""}.`;
+  backupResults.innerHTML = hits.slice(0, 50).map((r) => `
+    <li><span class="backup-title">${esc(r.t)}</span>
+    <span class="backup-meta">by ${esc(r.a)}${r.w ? ` · ${r.w.toLocaleString()} words` : ""}</span></li>`).join("");
+}
+
+backupSearch.addEventListener("input", debounce(runBackupSearch, 150));
