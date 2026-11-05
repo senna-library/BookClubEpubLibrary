@@ -44,6 +44,26 @@ const NOT_SHARED = [
   { name: "VioletGrey", allWorks: true },
 ];
 
+// Hide anything by these authors from the library, even if a row is still in the sheet.
+// "All works" entries match the author (pen names in brackets count too, and so does
+// any co-author); entries with `by` hide only that title by that author.
+const normKey = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "");
+const NOT_SHARED_RULES = NOT_SHARED.map((e) => {
+  const names = new Set([normKey(e.name)]);
+  const m = e.name.match(/^(.*?)\s*\((.*)\)\s*$/);
+  if (m) { names.add(normKey(m[1])); names.add(normKey(m[2])); }
+  return { names, title: e.allWorks ? null : normKey(e.name), by: e.by ? normKey(e.by) : null };
+});
+
+function isNotShared(item) {
+  const authors = String(item.author || "").split(/,|&|\band\b/).map(normKey).filter(Boolean);
+  const title = normKey(item.title);
+  return NOT_SHARED_RULES.some((r) =>
+    r.title === null
+      ? authors.some((a) => r.names.has(a))
+      : title === r.title && authors.includes(r.by));
+}
+
 // 📚 All fics from the sheet
 let library = [];
 
@@ -692,7 +712,7 @@ async function loadSheetData() {
         cover: coverIdx >= 0 ? (cols[coverIdx] || "").trim() : "",
       };
     })
-    .filter((item) => item.title);
+    .filter((item) => item.title && !isNotShared(item));
 
   await applyCoverMap();
 
