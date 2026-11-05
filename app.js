@@ -752,7 +752,7 @@ document.addEventListener("DOMContentLoaded", initLibrary);
 // Tabs
 // ---------------------------------------------------------------------------
 
-const tabButtons = [...document.querySelectorAll(".tab-btn")];
+const tabButtons = [...document.querySelectorAll(".tab-btn[data-tab]")];
 const tabContents = document.querySelectorAll(".tab-content");
 
 // Soft gate for the Typesets tab (not real protection; it's visible in the page source)

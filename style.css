@@ -138,6 +138,7 @@ a:hover { color: var(--text); }
   transition: color 0.15s ease;
 }
 .tab-btn:hover { color: var(--text); }
+.tab-link { text-decoration: none; }
 .tab-btn[aria-selected="true"] { color: var(--gold); border-bottom-color: var(--gold); }
 
 .hosts {
