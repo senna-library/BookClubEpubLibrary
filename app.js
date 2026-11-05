@@ -54,6 +54,7 @@ const wordCountFilter = $("wordCountFilter");
 const relationshipFilter = $("relationshipFilter");
 const cortRecsFilter = $("cortRecsFilter");
 const tropeFilter = $("tropeFilter");
+const ratingFilter = $("ratingFilter");
 
 // Tags to exclude from trope filter
 const EXCLUDED_FROM_TROPES = new Set([
@@ -226,10 +227,26 @@ function matchesTropeFilter(item) {
   return (item.tags || []).some((t) => normalize(t) === selected);
 }
 
+// Rating comes from the AO3 rating tag in the sheet's Tags column
+const RATING_TAGS = {
+  general: "general audiences",
+  teen: "teen and up audiences",
+  mature: "mature",
+  explicit: "explicit",
+  notrated: "not rated",
+};
+
+function matchesRatingFilter(item) {
+  if (ratingFilter.value === "all") return true;
+  const wanted = RATING_TAGS[ratingFilter.value];
+  return (item.tags || []).some((t) => normalize(t) === wanted);
+}
+
 function matchesAllFilters(item) {
   return matchesCortsFilter(item) &&
     matchesWordCountFilter(item) &&
     matchesRelationshipFilter(item) &&
+    matchesRatingFilter(item) &&
     matchesTropeFilter(item);
 }
 
@@ -238,6 +255,7 @@ function hasActiveFilters() {
     searchInput.value.trim() ||
     wordCountFilter.value !== "all" ||
     relationshipFilter.value !== "all" ||
+    ratingFilter.value !== "all" ||
     tropeFilter.value !== "all" ||
     cortRecsFilter.checked
   );
@@ -517,6 +535,9 @@ function renderChips() {
   if (relationshipFilter.value !== "all") {
     chips.push({ key: "ship", label: relationshipFilter.selectedOptions[0].textContent });
   }
+  if (ratingFilter.value !== "all") {
+    chips.push({ key: "rating", label: ratingFilter.selectedOptions[0].textContent });
+  }
   if (tropeFilter.value !== "all") {
     chips.push({ key: "tag", label: tropeFilter.selectedOptions[0].textContent.replace(/\s*\(\d+\)$/, "") });
   }
@@ -535,6 +556,7 @@ $("activeFilters").addEventListener("click", (e) => {
   if (key === "search") searchInput.value = "";
   if (key === "words") wordCountFilter.value = "all";
   if (key === "ship") relationshipFilter.value = "all";
+  if (key === "rating") ratingFilter.value = "all";
   if (key === "tag") tropeFilter.value = "all";
   if (key === "cort") cortRecsFilter.checked = false;
   applyFilters();
@@ -573,6 +595,7 @@ function syncUrl() {
   if (q) params.set("q", q);
   if (wordCountFilter.value !== "all") params.set("words", wordCountFilter.value);
   if (relationshipFilter.value !== "all") params.set("ship", relationshipFilter.value);
+  if (ratingFilter.value !== "all") params.set("rating", ratingFilter.value);
   if (tropeFilter.value !== "all") params.set("tag", tropeFilter.value);
   if (cortRecsFilter.checked) params.set("cort", "1");
 
@@ -592,6 +615,7 @@ function restoreFromUrl() {
   };
   setSelect(wordCountFilter, params.get("words"));
   setSelect(relationshipFilter, params.get("ship"));
+  setSelect(ratingFilter, params.get("rating"));
   setSelect(tropeFilter, params.get("tag"));
 }
 
@@ -716,7 +740,7 @@ const applySearch = debounce(() => {
   }
 }, 300);
 searchInput.addEventListener("input", applySearch);
-[wordCountFilter, relationshipFilter, tropeFilter, cortRecsFilter].forEach((el) => {
+[wordCountFilter, relationshipFilter, ratingFilter, tropeFilter, cortRecsFilter].forEach((el) => {
   el.addEventListener("change", applyFilters);
 });
 
@@ -742,6 +766,7 @@ $("clearBtn").addEventListener("click", () => {
   searchInput.value = "";
   wordCountFilter.value = "all";
   relationshipFilter.value = "all";
+  ratingFilter.value = "all";
   tropeFilter.value = "all";
   cortRecsFilter.checked = false;
   applyFilters();
