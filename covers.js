@@ -259,12 +259,31 @@ function setFiles(kind, files) {
   $("scanStatus").textContent = `${epubFiles.length} EPUBs and ${coverFiles.length} covers chosen.`;
 }
 
-for (const [kind, drop, input] of [["epub", "dropEpub", "epubFiles"], ["cover", "dropCover", "coverFiles"]]) {
+// Dropped folders have to be walked entry by entry
+async function filesFromDrop(dt) {
+  const entries = [...dt.items].map((i) => i.webkitGetAsEntry?.()).filter(Boolean);
+  if (!entries.length) return [...dt.files];
+  const out = [];
+  const walk = async (entry) => {
+    if (entry.isFile) { out.push(await new Promise((res, rej) => entry.file(res, rej))); return; }
+    const reader = entry.createReader();
+    for (;;) {
+      const batch = await new Promise((res, rej) => reader.readEntries(res, rej));
+      if (!batch.length) break;
+      for (const e of batch) await walk(e);
+    }
+  };
+  for (const e of entries) await walk(e);
+  return out;
+}
+
+for (const [kind, drop, input, folder] of [["epub", "dropEpub", "epubFiles", "epubFolder"], ["cover", "dropCover", "coverFiles", "coverFolder"]]) {
   $(input).onchange = () => setFiles(kind, $(input).files);
+  $(folder).onchange = () => setFiles(kind, $(folder).files);
   const box = $(drop);
   box.ondragover = (e) => { e.preventDefault(); box.classList.add("over"); };
   box.ondragleave = () => box.classList.remove("over");
-  box.ondrop = (e) => { e.preventDefault(); box.classList.remove("over"); setFiles(kind, e.dataTransfer.files); };
+  box.ondrop = async (e) => { e.preventDefault(); box.classList.remove("over"); setFiles(kind, await filesFromDrop(e.dataTransfer)); };
 }
 
 $("scan").onclick = async () => {

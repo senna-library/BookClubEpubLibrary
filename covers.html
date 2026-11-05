@@ -17,7 +17,8 @@
     .ct-drop.over { border-color: var(--gold); background: rgba(220, 196, 140, .06); }
     .ct-drop strong { font-weight: 600; }
     .ct-drop span { color: var(--text-muted); font-size: .9rem; }
-    .ct-drop input[type=file] { color: var(--text-soft); font: inherit; max-width: 100%; }
+    .ct-picks { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ct-picks .ct-btn:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
     .ct-opts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0; color: var(--text-soft); }
     .ct-opts label { display: flex; gap: 6px; align-items: center; }
     .ct-btn { font: inherit; padding: 8px 16px; border-radius: var(--radius-control); border: 1px solid var(--rule-strong); background: var(--surface); color: var(--text); cursor: pointer; }
@@ -58,13 +59,13 @@
     <div class="ct-panel">
       <div class="ct-drop" id="dropEpub">
         <strong>EPUBs</strong>
-        <span>Drop files here or choose them. You can pick a whole folder's worth at once.</span>
-        <input id="epubFiles" type="file" accept=".epub,application/epub+zip" multiple aria-label="Choose EPUB files">
+        <span>Choose a whole folder, or drop a folder or files here.</span>
+        <span class="ct-picks"><label class="ct-btn">Choose a folder<input id="epubFolder" type="file" webkitdirectory hidden></label> <label class="ct-btn">Choose files<input id="epubFiles" type="file" accept=".epub,application/epub+zip" multiple hidden></label></span>
       </div>
       <div class="ct-drop" id="dropCover">
         <strong>Cover images</strong>
         <span>JPG, PNG, GIF or WebP. Name each cover like its book (for example “The Greenhouse.jpg”) so it matches on its own.</span>
-        <input id="coverFiles" type="file" accept="image/*" multiple aria-label="Choose cover images">
+        <span class="ct-picks"><label class="ct-btn">Choose a folder<input id="coverFolder" type="file" webkitdirectory hidden></label> <label class="ct-btn">Choose files<input id="coverFiles" type="file" accept="image/*" multiple hidden></label></span>
       </div>
       <div class="ct-opts">
         <label><input type="checkbox" id="coverPage"> Also add a cover page at the start of the book</label>
