@@ -599,6 +599,24 @@ function restoreFromUrl() {
 // Data loading
 // ---------------------------------------------------------------------------
 
+// Real covers pulled from the epubs: covers/index.json maps "title|author" (lowercase
+// letters and digits only) to an image. A Cover column in the sheet still wins.
+async function applyCoverMap() {
+  try {
+    const res = await fetch("covers/index.json");
+    if (!res.ok) return;
+    const map = await res.json();
+    const k = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "");
+    for (const item of library) {
+      if (item.cover) continue;
+      const path = map[`${k(item.title)}|${k(item.author)}`];
+      if (path) item.cover = new URL(path, location.href).href;
+    }
+  } catch (e) {
+    /* covers are optional */
+  }
+}
+
 async function loadSheetData() {
   const response = await fetch(SHEET_URL);
   if (!response.ok) {
@@ -650,6 +668,8 @@ async function loadSheetData() {
       };
     })
     .filter((item) => item.title);
+
+  await applyCoverMap();
 
   $("libraryCount").innerHTML =
     `<strong>${library.length.toLocaleString()}</strong> ${library.length === 1 ? "fic" : "fics"} and counting`;
