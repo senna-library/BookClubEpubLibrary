@@ -332,8 +332,9 @@ $("go").onclick = async () => {
   } else if (done.length) {
     $("goStatus").textContent = "Zipping them up…";
     const zip = new JSZip();
-    done.forEach((d) => zip.file(d.name, d.blob, { compression: "STORE", createFolders: false }));
-    download(await zip.generateAsync({ type: "blob", compression: "STORE" }), "EPUBs with covers.zip");
+    // Compressed (not "STORE"): Mac's Archive Utility refuses some zips of uncompressed EPUBs
+    done.forEach((d) => zip.file(d.name, d.blob, { compression: "DEFLATE", createFolders: false }));
+    download(await zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } }), "EPUBs with covers.zip");
   }
   $("doneList").innerHTML = (done.length ? `<li class="ct-good">${done.length} of ${picks.length} done. ${done.length === 1 ? "Your EPUB" : "A zip of your EPUBs"} should be in your downloads.</li>` : "") +
     failed.map((f) => `<li class="ct-err">${esc(f.name)}: ${esc(f.error)}</li>`).join("");
