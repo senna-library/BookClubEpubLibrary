@@ -28,6 +28,7 @@ const NOT_SHARED = [
   { name: "EllieEckert", allWorks: true },
   { name: "Jelly_Roll", allWorks: true },
   { name: "Lady_Hildr", allWorks: true },
+  { name: "Kitchenwench", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
   { name: "LadyUrsa", allWorks: true },
   { name: "Larlotte", allWorks: true },
