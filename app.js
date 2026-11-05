@@ -23,12 +23,14 @@ const NOT_SHARED = [
   { name: "AccioMjolnir", allWorks: true },
   { name: "After the Sea", by: "Colubrina" },
   { name: "BlueZeldana", allWorks: true },
+  { name: "BurningChandeliers", allWorks: true },
   { name: "Chengbby", allWorks: true },
   { name: "EllieEckert", allWorks: true },
   { name: "Jelly_Roll", allWorks: true },
   { name: "Lady_Hildr", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
   { name: "LadyUrsa", allWorks: true },
+  { name: "Larlotte", allWorks: true },
   { name: "Middle of the Night", by: "SereneMusafir" },
   { name: "Mirabella29", allWorks: true },
   { name: "Mon Couteau Aigue", by: "Gillianeliza" },
@@ -38,6 +40,7 @@ const NOT_SHARED = [
   { name: "RiddleMe_Nott (KLaColeReads)", allWorks: true },
   { name: "Shamione", allWorks: true },
   { name: "Sinflower81", allWorks: true },
+  { name: "VioletGrey", allWorks: true },
 ];
 
 // 📚 All fics from the sheet
@@ -902,7 +905,7 @@ function renderTypesets() {
 
     return `
       <div class="typeset-item">
-        <h3><a href="typesets/${encodeURIComponent(info.filename)}" target="_blank" rel="noopener noreferrer">${esc(info.title)}</a></h3>
+        <h3><a href="https://github.com/senna-library/BookClubEpubLibrary/releases/download/typesets-pdfs/${encodeURIComponent(info.filename)}" target="_blank" rel="noopener noreferrer">${esc(info.title)}</a></h3>
         <p>by ${esc(info.author)}</p>
         <p>${esc(metaParts.join(' • '))}</p>
       </div>
