@@ -767,3 +767,5 @@ a.cover:hover { transform: translateY(-2px); }
 }
 .disclaimer p { margin: 0 auto; max-width: 52rem; }
 .disclaimer .disclaimer-sig { margin-top: 0.3rem; font-weight: 700; letter-spacing: 0.04em; color: var(--text); }
+
+.masthead .established { margin: 0.2rem 0 0.4rem; color: var(--text-soft); letter-spacing: 0.04em; }
