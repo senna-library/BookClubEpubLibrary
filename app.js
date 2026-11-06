@@ -30,7 +30,7 @@ const NOT_SHARED = [
   { name: "Lady_Hildr", allWorks: true },
   { name: "Kitchenwench", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
-  { name: "LadyUrsa", allWorks: true, alsoBullying: true }, // asked to be removed, and also listed under bullying
+  { name: "LadyUrsa", allWorks: true, alsoBullying: true, note: "removed years ago" }, // asked to be removed, and also listed under bullying
   { name: "Larlotte", allWorks: true },
   { name: "Middle of the Night", by: "SereneMusafir" },
   { name: "Mirabella29", allWorks: true },
@@ -43,10 +43,10 @@ const NOT_SHARED = [
   { name: "Sinflower81", allWorks: true },
   { name: "VioletGrey", allWorks: true },
   // Removed for bullying (shown in their own section on the page)
-  { name: "briarandbones", allWorks: true, bullying: true },
-  { name: "Knickerandkneazles", allWorks: true, bullying: true },
-  { name: "MadeinLavendah", allWorks: true, bullying: true },
-  { name: "EscapeInMyBookshelf", allWorks: true, bullying: true },
+  { name: "briarandbones", allWorks: true, bullying: true, note: "removed November 5, 2026" },
+  { name: "Knickerandkneazles", allWorks: true, bullying: true, note: "removed years ago" },
+  { name: "MadeinLavendah", allWorks: true, bullying: true, note: "removed years ago" },
+  { name: "EscapeInMyBookshelf", allWorks: true, bullying: true, note: "removed November 5, 2026" },
 ];
 
 // Hide anything by these authors from the library, even if a row is still in the sheet.
@@ -990,11 +990,11 @@ renderTypesets();
 // Not shared (author requests)
 // ---------------------------------------------------------------------------
 
-const notSharedLi = (e) => `
-  <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}</li>
+const notSharedLi = (e, withNote) => `
+  <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}${withNote && e.note ? ` <span>· ${esc(e.note)}</span>` : ""}</li>
 `;
-$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map(notSharedLi).join("");
-$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map(notSharedLi).join("");
+$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map((e) => notSharedLi(e)).join("");
+$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map((e) => notSharedLi(e, true)).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
