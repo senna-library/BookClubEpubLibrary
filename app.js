@@ -30,7 +30,7 @@ const NOT_SHARED = [
   { name: "Lady_Hildr", allWorks: true },
   { name: "Kitchenwench", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
-  { name: "LadyUrsa", allWorks: true },
+  { name: "LadyUrsa", allWorks: true, alsoBullying: true }, // asked to be removed, and also listed under bullying
   { name: "Larlotte", allWorks: true },
   { name: "Middle of the Night", by: "SereneMusafir" },
   { name: "Mirabella29", allWorks: true },
@@ -994,7 +994,7 @@ const notSharedLi = (e) => `
   <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}</li>
 `;
 $("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map(notSharedLi).join("");
-$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying).map(notSharedLi).join("");
+$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map(notSharedLi).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
