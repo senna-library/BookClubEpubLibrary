@@ -30,7 +30,7 @@ const NOT_SHARED = [
   { name: "Lady_Hildr", allWorks: true },
   { name: "Kitchenwench", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
-  { name: "LadyUrsa", allWorks: true, alsoBullying: true, note: "removed years ago" }, // asked to be removed, and also listed under bullying
+  { name: "LadyUrsa", allWorks: true, alsoBullying: true, requestNote: "removed at request", note: "added to bullying list November 5, 2026" }, // asked to be removed, and also listed under bullying
   { name: "Larlotte", allWorks: true },
   { name: "Middle of the Night", by: "SereneMusafir" },
   { name: "Mirabella29", allWorks: true },
@@ -990,11 +990,11 @@ renderTypesets();
 // Not shared (author requests)
 // ---------------------------------------------------------------------------
 
-const notSharedLi = (e, withNote) => `
-  <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}${withNote && e.note ? ` <span>· ${esc(e.note)}</span>` : ""}</li>
+const notSharedLi = (e, noteText) => `
+  <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}${noteText ? ` <span>· ${esc(noteText)}</span>` : ""}</li>
 `;
-$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map((e) => notSharedLi(e)).join("");
-$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map((e) => notSharedLi(e, true)).join("");
+$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map((e) => notSharedLi(e, e.requestNote)).join("");
+$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map((e) => notSharedLi(e, e.note)).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
