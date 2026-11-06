@@ -44,6 +44,7 @@
     <div class="topbar">
       <nav class="tab-navigation" role="tablist" aria-label="Site sections">
         <button class="tab-btn" role="tab" id="tab-library" aria-controls="library-tab" aria-selected="true" data-tab="library">Library</button>
+        <button class="tab-btn" role="tab" id="tab-nonhp" aria-controls="nonhp-tab" aria-selected="false" tabindex="-1" data-tab="nonhp">Non-HP</button>
         <button class="tab-btn" role="tab" id="tab-typesets" aria-controls="typesets-tab" aria-selected="false" tabindex="-1" data-tab="typesets">Typesets</button>
         <button class="tab-btn" role="tab" id="tab-backup" aria-controls="backup-tab" aria-selected="false" tabindex="-1" data-tab="backup">Backup Check</button>
         <a class="tab-btn tab-link" href="covers.html">Cover Tool</a>
@@ -164,6 +165,23 @@
       </section>
       <p class="library-count" id="backupStatus" aria-live="polite"></p>
       <ul class="backup-results" id="backupResults"></ul>
+    </section>
+
+    <!-- Non-HP -->
+    <section id="nonhp-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-nonhp">
+      <div class="typesets-intro">
+        <h2>Non-HP Fics</h2>
+        <p>Fics from other fandoms in the server library. Search by title, author, ship or tag.</p>
+      </div>
+      <section class="search-area" aria-label="Search non-HP fics">
+        <label class="visually-hidden" for="nonhpSearch">Search non-HP fics</label>
+        <div class="search-field">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
+          <input id="nonhpSearch" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Title, author, ship or tag" />
+        </div>
+      </section>
+      <p class="library-count" id="nonhpStatus" aria-live="polite"></p>
+      <div id="nonhpResults" class="card-grid"></div>
     </section>
 
     <!-- Typesets -->

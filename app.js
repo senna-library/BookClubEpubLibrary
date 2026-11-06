@@ -2,6 +2,10 @@
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDrnZp9JF0MARMOJRZYdAEjNj9gB5RnTNcYKIAwA2Grf41H5wQ9OQY7fNH7xE727mkvYkM4nhR56QZ/pub?gid=162465043&single=true&output=tsv";
 
+// Non-HP tab of the same sheet (same columns as the Library tab)
+const NONHP_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDrnZp9JF0MARMOJRZYdAEjNj9gB5RnTNcYKIAwA2Grf41H5wQ9OQY7fNH7xE727mkvYkM4nhR56QZ/pub?gid=1956610166&single=true&output=tsv";
+
 // New fics get appended to the bottom of the sheet, so "new" = the last rows.
 const NEW_ADDITIONS_COUNT = 8;
 const RANDOM_PICKS_COUNT = 6;
@@ -671,8 +675,8 @@ async function applyCoverMap() {
   }
 }
 
-async function loadSheetData() {
-  const response = await fetch(SHEET_URL);
+async function fetchSheetItems(url) {
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
   }
@@ -690,7 +694,7 @@ async function loadSheetData() {
   // never collides with the existing positional columns.
   const coverIdx = headerRow.findIndex((h) => /^cover(\s*(image|url|link))?$/i.test(h.trim()));
 
-  library = dataRows
+  return dataRows
     .map((cols) => {
       const [
         title,
@@ -722,6 +726,10 @@ async function loadSheetData() {
       };
     })
     .filter((item) => item.title && !isNotShared(item));
+}
+
+async function loadSheetData() {
+  library = await fetchSheetItems(SHEET_URL);
 
   await applyCoverMap();
 
@@ -861,6 +869,7 @@ function switchTab(targetTab) {
   localStorage.setItem("activeTab", targetTab);
   if (targetTab === "library") updateClampButtons();
   if (targetTab === "backup") loadBackupIndex();
+  if (targetTab === "nonhp") loadNonHp();
   return true;
 }
 
@@ -1051,3 +1060,42 @@ function runBackupSearch() {
 }
 
 backupSearch.addEventListener("input", debounce(runBackupSearch, 150));
+
+
+// ---------------------------------------------------------------------------
+// Non-HP tab: the sheet's Non-HP tab, searchable, shown with the same fic cards
+// ---------------------------------------------------------------------------
+const nonhpSearch = $("nonhpSearch");
+const nonhpStatus = $("nonhpStatus");
+const nonhpResults = $("nonhpResults");
+let nonhpItems = null;
+
+async function loadNonHp() {
+  if (nonhpItems) return;
+  nonhpStatus.textContent = "Loading…";
+  try {
+    nonhpItems = (await fetchSheetItems(NONHP_URL)).map((item) => ({
+      ...item,
+      key: normalize(`${item.title} ${item.author} ${item.mainRelationship} ${item.tags.join(" ")}`),
+    }));
+    runNonHpSearch();
+  } catch (err) {
+    console.error(err);
+    nonhpStatus.textContent = "Couldn’t load the non-HP list. Try again in a bit.";
+  }
+}
+
+function runNonHpSearch() {
+  if (!nonhpItems) return;
+  const words = normalize(nonhpSearch.value).split(" ").filter(Boolean);
+  const hits = nonhpItems.filter((item) => words.every((w) => item.key.includes(w)));
+  nonhpStatus.innerHTML = words.length
+    ? `${hits.length.toLocaleString()} match${hits.length === 1 ? "" : "es"}`
+    : `<strong>${nonhpItems.length.toLocaleString()}</strong> non-HP ${nonhpItems.length === 1 ? "fic" : "fics"}`;
+  nonhpResults.innerHTML = hits.length
+    ? hits.map(renderFicCard).join("")
+    : '<p class="empty">Nothing here. Try a different title, author or ship.</p>';
+  updateClampButtons(nonhpResults);
+}
+
+nonhpSearch.addEventListener("input", debounce(runNonHpSearch, 150));
