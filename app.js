@@ -40,6 +40,7 @@ const NOT_SHARED = [
   { name: "Ottersholdinghands", allWorks: true },
   { name: "RiddleMe_Nott (KLaColeReads)", allWorks: true },
   { name: "Shamione", allWorks: true },
+  { name: "serpentsandskulls", allWorks: true },
   { name: "Sinflower81", allWorks: true },
   { name: "VioletGrey", allWorks: true },
   // Removed for talking about admins (shown in their own section on the page)
