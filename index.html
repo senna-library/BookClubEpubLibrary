@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
-  <title>📚 Book Club EPUB Library: temporarily down</title>
+  <title>📚 Book Club EPUB Library</title>
   <style>
     html, body { height: 100%; margin: 0; }
     body { display: flex; align-items: center; justify-content: center; background: #12241b; color: #f0ead9;
@@ -17,15 +17,19 @@
       .statement { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #3f6150; text-align: left; }
     .statement h2 { font-size: 1.3rem; text-align: center; margin: 0 0 1rem; }
     .statement p { font-size: 1rem; }
+    .pledge { margin-top: 2.5rem; padding: 1.5rem; border: 1px solid #3f6150; border-radius: 10px; background: #183024; text-align: center; }
+    .pledge h2 { font-size: 1.3rem; margin: 0 0 1rem; }
+    .pledge-check { display: block; font-size: 1.05rem; line-height: 1.5; cursor: pointer; margin-bottom: 1rem; }
+    .pledge-check input { margin-right: 0.5rem; transform: scale(1.2); }
+    #enterBtn { font: inherit; font-size: 1.05rem; padding: 0.7rem 1.4rem; border-radius: 8px; border: 0; background: #d9b66b; color: #12241b; cursor: pointer; }
+    #enterBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pledge-sig { margin-top: 1rem; }
     p { font-size: 1.1rem; line-height: 1.6; color: #d8d6c8; margin: 0.5rem 0; }
   </style>
 </head>
 <body>
   <main>
     <h1>Book Club <span>EPUB</span> Library</h1>
-    <p>The site is temporarily down.</p>
-    <p>It will be back when Senna decides to bring it back.</p>
-    <p>xoxo Senna 💚🐍</p>
     <section class="statement">
       <h2>A Statement Regarding Targeted Harassment and Fandom Monitoring</h2>
       <p>I feel it is necessary to address an ongoing situation involving members of the Harry Potter (HP) fandom and the treatment of my website and myself.</p>
@@ -38,6 +42,21 @@
       <p>I have no interest in participating in fandom factionalism, personal vendettas, or coordinated online hostility. My focus remains on my website and the community it serves.</p>
       <p>Disagreement is not a justification for harassment, and criticism should never require the distortion of facts.</p>
     </section>
+    <section class="pledge">
+      <h2>Before you come in</h2>
+      <label class="pledge-check"><input type="checkbox" id="pledgeBox" /> I promise no dickish behavior, and to be a nice person in the fandom.</label>
+      <button id="enterBtn" type="button" disabled>Take me to the library</button>
+      <p class="pledge-sig">xoxo Senna 💚🐍</p>
+    </section>
   </main>
+  <script>
+    var box = document.getElementById("pledgeBox"), btn = document.getElementById("enterBtn");
+    box.addEventListener("change", function () { btn.disabled = !box.checked; });
+    btn.addEventListener("click", function () {
+      if (!box.checked) return;
+      try { localStorage.setItem("pledged", "1"); } catch (e) {}
+      location.href = "library.html" + location.search;
+    });
+  </script>
 </body>
 </html>

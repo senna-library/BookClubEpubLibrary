@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎨 Epub Cover Tool · Book Club EPUB Library</title>
+  <meta name="description" content="Add cover images to your EPUBs right in your browser. Nothing is uploaded." />
+  <meta name="theme-color" content="#0f1a15" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .ct-panel { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-panel); padding: 16px; margin-bottom: 16px; }
+    .ct-drop { display: grid; gap: 4px; justify-items: start; padding: 14px; border: 1px dashed var(--rule-strong); border-radius: var(--radius-panel); margin-bottom: 12px; }
+    .ct-drop.over { border-color: var(--gold); background: rgba(220, 196, 140, .06); }
+    .ct-drop strong { font-weight: 600; }
+    .ct-drop span { color: var(--text-muted); font-size: .9rem; }
+    .ct-picks { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ct-picks .ct-btn:focus-within { outline: 3px solid var(--gold); outline-offset: 2px; }
+    .ct-opts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 12px 0; color: var(--text-soft); }
+    .ct-opts label { display: flex; gap: 6px; align-items: center; }
+    .ct-btn { font: inherit; padding: 8px 16px; border-radius: var(--radius-control); border: 1px solid var(--rule-strong); background: var(--surface); color: var(--text); cursor: pointer; }
+    .ct-btn.primary { background: var(--gold); color: var(--bg); border-color: var(--gold); font-weight: 600; }
+    .ct-btn:disabled { opacity: .5; cursor: default; }
+    .ct-btn:focus-visible, .ct-row select:focus-visible, .ct-drop input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+    .ct-bar { display: flex; gap: 10px 12px; align-items: center; flex-wrap: wrap; }
+    .ct-status { color: var(--text-muted); }
+    .ct-err { color: var(--danger); }
+    .ct-good { color: var(--sage-bright); }
+    .ct-row { display: grid; grid-template-columns: 24px 64px 1fr 260px; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--rule); }
+    .ct-row .thumb { width: 64px; height: 92px; object-fit: cover; background: var(--bg); border: 1px solid var(--rule); display: block; }
+    .ct-row .ph { width: 64px; height: 92px; display: grid; place-items: center; color: var(--text-faint); font-size: .75rem; border: 1px dashed var(--rule); }
+    .ct-title { font-weight: 600; overflow-wrap: anywhere; }
+    .ct-meta { color: var(--text-muted); font-size: .85rem; overflow-wrap: anywhere; }
+    .ct-tag { font-size: .75rem; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--rule-strong); margin-left: 6px; white-space: nowrap; }
+    .ct-tag.warn { color: var(--gold); border-color: var(--gold-dim); }
+    .ct-tag.ok { color: var(--sage-bright); border-color: var(--sage); }
+    .ct-row select { width: 100%; padding: 7px; border: 1px solid var(--rule-strong); border-radius: var(--radius-control); background: var(--bg); color: var(--text); font: inherit; }
+    .ct-back { display: inline-block; margin: 0 0 12px; color: var(--sage-bright); }
+    @media (max-width: 700px) { .ct-row { grid-template-columns: 24px 64px 1fr; } .ct-row .pick { grid-column: 1 / -1; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="masthead">
+      <h1>Epub <span>Cover</span> Tool</h1>
+      <p class="tagline">Give your EPUBs the covers they deserve</p>
+    </header>
+
+    <a class="ct-back" href="index.html">← Back to the library</a>
+
+    <div class="typesets-intro">
+      <p>Choose your EPUBs and your cover images. The tool matches them up by name, you check the matches, and you download new EPUBs with the covers inside. Your original files are never changed.</p>
+      <p><strong>Everything happens in your browser.</strong> Your files are not uploaded anywhere.</p>
+    </div>
+
+    <div class="ct-panel">
+      <div class="ct-drop" id="dropEpub">
+        <strong>EPUBs</strong>
+        <span>Choose a whole folder, or drop a folder or files here.</span>
+        <span class="ct-picks"><label class="ct-btn">Choose a folder<input id="epubFolder" type="file" webkitdirectory hidden></label> <label class="ct-btn">Choose files<input id="epubFiles" type="file" accept=".epub,application/epub+zip" multiple hidden></label></span>
+      </div>
+      <div class="ct-drop" id="dropCover">
+        <strong>Cover images</strong>
+        <span>JPG, PNG, GIF or WebP. Name each cover like its book (for example “The Greenhouse.jpg”) so it matches on its own.</span>
+        <span class="ct-picks"><label class="ct-btn">Choose a folder<input id="coverFolder" type="file" webkitdirectory hidden></label> <label class="ct-btn">Choose files<input id="coverFiles" type="file" accept="image/*" multiple hidden></label></span>
+      </div>
+      <div class="ct-opts">
+        <label><input type="checkbox" id="coverPage"> Also add a cover page at the start of the book</label>
+        <label><input type="checkbox" id="shrink"> Shrink big covers (max 1600px tall)</label>
+      </div>
+      <button class="ct-btn primary" id="scan">Match them up</button>
+      <span class="ct-status" id="scanStatus" role="status"></span>
+    </div>
+
+    <div class="ct-panel" id="results" hidden>
+      <div class="ct-bar">
+        <strong id="summary"></strong>
+        <button class="ct-btn" id="all">Select all</button>
+        <button class="ct-btn" id="none">Select none</button>
+        <button class="ct-btn primary" id="go">Add covers and download</button>
+        <span class="ct-status" id="goStatus" role="status"></span>
+      </div>
+      <div id="rows"></div>
+    </div>
+
+    <div class="ct-panel" id="done" hidden>
+      <strong>Finished</strong>
+      <ul id="doneList"></ul>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="covers.js"></script>
+</body>
+</html>
