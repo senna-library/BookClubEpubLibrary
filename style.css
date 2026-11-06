@@ -771,3 +771,4 @@ a.cover:hover { transform: translateY(-2px); }
 .masthead .established { margin: 0.2rem 0 0.4rem; color: var(--text-soft); letter-spacing: 0.04em; }
 
 .not-shared-sub { margin: 1rem 0 0.4rem; font-size: 1rem; color: var(--text); }
+.not-shared-sub-bold { font-weight: 700; color: var(--gold); }

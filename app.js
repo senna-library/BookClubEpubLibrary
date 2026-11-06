@@ -31,6 +31,7 @@ const NOT_SHARED = [
   { name: "Chengbby", allWorks: true },
   { name: "EllieEckert", allWorks: true },
   { name: "Jelly_Roll", allWorks: true },
+  { name: "junesflame", allWorks: true },
   { name: "Lady_Hildr", allWorks: true },
   { name: "Kitchenwench", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
@@ -44,7 +45,6 @@ const NOT_SHARED = [
   { name: "Ottersholdinghands", allWorks: true },
   { name: "RiddleMe_Nott (KLaColeReads)", allWorks: true },
   { name: "Shamione", allWorks: true },
-  { name: "serpentsandskulls", allWorks: true },
   { name: "Sinflower81", allWorks: true },
   { name: "VioletGrey", allWorks: true },
   // Removed for talking about admins (shown in their own section on the page)
@@ -1007,8 +1007,7 @@ const notSharedLi = (e, noteText) => `
   <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}${noteText ? ` <span>· ${esc(noteText)}</span>` : ""}</li>
 `;
 $("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying && !e.leftOut).map((e) => notSharedLi(e, e.requestNote)).join("");
-$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map((e) => notSharedLi(e, e.note)).join("");
-$("leftOutList").innerHTML = NOT_SHARED.filter((e) => e.leftOut).map((e) => notSharedLi(e, e.note)).join("");
+$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying || e.leftOut).map((e) => notSharedLi(e, e.note)).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
