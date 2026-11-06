@@ -30,7 +30,7 @@ const NOT_SHARED = [
   { name: "Lady_Hildr", allWorks: true },
   { name: "Kitchenwench", allWorks: true },
   { name: "Ladysophiac", allWorks: true },
-  { name: "LadyUrsa", allWorks: true, alsoBullying: true, requestNote: "removed at request", note: "added to bullying list November 5, 2026" }, // asked to be removed, and also listed under bullying
+  { name: "LadyUrsa", allWorks: true, alsoBullying: true, requestNote: "removed at request", note: "added to this list November 5, 2026" }, // asked to be removed, and also listed under bullying
   { name: "Larlotte", allWorks: true },
   { name: "Middle of the Night", by: "SereneMusafir" },
   { name: "Mirabella29", allWorks: true },
@@ -42,7 +42,7 @@ const NOT_SHARED = [
   { name: "Shamione", allWorks: true },
   { name: "Sinflower81", allWorks: true },
   { name: "VioletGrey", allWorks: true },
-  // Removed for bullying (shown in their own section on the page)
+  // Removed for talking about admins (shown in their own section on the page)
   { name: "briarandbones", allWorks: true, bullying: true, note: "removed November 5, 2026" },
   { name: "Knickerandkneazles", allWorks: true, bullying: true, note: "removed years ago" },
   { name: "MadeinLavendah", allWorks: true, bullying: true, note: "removed years ago" },
