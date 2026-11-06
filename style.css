@@ -190,7 +190,7 @@ a:hover { color: var(--text); }
 
 input[type="search"],
 #searchInput,
-#backupSearch,
+#backupSearch, #nonhpSearch,
 select {
   width: 100%;
   height: 2.25rem;
@@ -205,7 +205,7 @@ select {
 }
 input[type="search"],
 #searchInput,
-#backupSearch {
+#backupSearch, #nonhpSearch {
   height: 3rem;
   padding: 0 1rem 0 2.8rem;
   border-radius: var(--radius-input);
@@ -213,12 +213,12 @@ input[type="search"],
   -webkit-appearance: none;
   appearance: none;
 }
-#searchInput::placeholder, #backupSearch::placeholder, input[type="search"]::placeholder { color: var(--text-faint); }
+#searchInput::placeholder, #backupSearch::placeholder, #nonhpSearch::placeholder, input[type="search"]::placeholder { color: var(--text-faint); }
 select { cursor: pointer; }
-#searchInput:hover, #backupSearch:hover, select:hover { border-color: var(--sage); }
+#searchInput:hover, #backupSearch:hover, #nonhpSearch:hover, select:hover { border-color: var(--sage); }
 
 #searchInput:focus,
-#backupSearch:focus,
+#backupSearch:focus, #nonhpSearch:focus,
 select:focus {
   outline: none;
   border-color: var(--gold);

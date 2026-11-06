@@ -671,13 +671,13 @@ function restoreFromUrl() {
 
 // Real covers pulled from the epubs: covers/index.json maps "title|author" (lowercase
 // letters and digits only) to an image. A Cover column in the sheet still wins.
-async function applyCoverMap() {
+async function applyCoverMap(items = library) {
   try {
     const res = await fetch("covers/index.json");
     if (!res.ok) return;
     const map = await res.json();
     const k = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "");
-    for (const item of library) {
+    for (const item of items) {
       if (item.cover) continue;
       const path = map[`${k(item.title)}|${k(item.author)}`];
       if (path) item.cover = new URL(path, location.href).href;
@@ -1105,6 +1105,7 @@ async function loadNonHp() {
       ...item,
       key: normalize(`${item.title} ${item.author} ${item.mainRelationship} ${item.tags.join(" ")}`),
     }));
+    await applyCoverMap(nonhpItems);
     runNonHpSearch();
   } catch (err) {
     console.error(err);
