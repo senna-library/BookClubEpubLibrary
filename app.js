@@ -48,8 +48,8 @@ const NOT_SHARED = [
   { name: "MadeinLavendah", allWorks: true, bullying: true, note: "removed years ago" },
   { name: "EscapeInMyBookshelf", allWorks: true, bullying: true, note: "removed November 5, 2026" },
   // Hidden too; shown in their own section on the page
-  { name: "dearest_restless", allWorks: true, leftOut: true },
-  { name: "raverockyy", allWorks: true, leftOut: true },
+  { name: "dearest_restless", allWorks: true, leftOut: true, note: "added November 5, 2026" },
+  { name: "raverockyy", allWorks: true, leftOut: true, note: "added November 5, 2026" },
 ];
 
 // Hide anything by these authors from the library, even if a row is still in the sheet.
@@ -998,7 +998,7 @@ const notSharedLi = (e, noteText) => `
 `;
 $("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying && !e.leftOut).map((e) => notSharedLi(e, e.requestNote)).join("");
 $("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map((e) => notSharedLi(e, e.note)).join("");
-$("leftOutList").innerHTML = NOT_SHARED.filter((e) => e.leftOut).map((e) => notSharedLi(e)).join("");
+$("leftOutList").innerHTML = NOT_SHARED.filter((e) => e.leftOut).map((e) => notSharedLi(e, e.note)).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
