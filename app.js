@@ -47,6 +47,9 @@ const NOT_SHARED = [
   { name: "Knickerandkneazles", allWorks: true, bullying: true, note: "removed years ago" },
   { name: "MadeinLavendah", allWorks: true, bullying: true, note: "removed years ago" },
   { name: "EscapeInMyBookshelf", allWorks: true, bullying: true, note: "removed November 5, 2026" },
+  // Hidden too; shown in their own section on the page
+  { name: "dearest_restless", allWorks: true, leftOut: true },
+  { name: "raverockyy", allWorks: true, leftOut: true },
 ];
 
 // Hide anything by these authors from the library, even if a row is still in the sheet.
@@ -993,8 +996,9 @@ renderTypesets();
 const notSharedLi = (e, noteText) => `
   <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}${noteText ? ` <span>· ${esc(noteText)}</span>` : ""}</li>
 `;
-$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map((e) => notSharedLi(e, e.requestNote)).join("");
+$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying && !e.leftOut).map((e) => notSharedLi(e, e.requestNote)).join("");
 $("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying).map((e) => notSharedLi(e, e.note)).join("");
+$("leftOutList").innerHTML = NOT_SHARED.filter((e) => e.leftOut).map((e) => notSharedLi(e)).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
