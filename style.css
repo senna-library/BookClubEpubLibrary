@@ -754,3 +754,16 @@ a.cover:hover { transform: translateY(-2px); }
 .backup-results li { padding: var(--sp-3) 0; border-top: 1px solid var(--rule); }
 .backup-title { display: block; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--text); }
 .backup-meta { display: block; font-size: 0.85rem; color: var(--text-muted); }
+
+/* disclaimer banner */
+.disclaimer {
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule-strong);
+  color: var(--text-soft);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.disclaimer p { margin: 0 auto; max-width: 52rem; }
+.disclaimer .disclaimer-sig { margin-top: 0.3rem; font-weight: 700; letter-spacing: 0.04em; color: var(--text); }
