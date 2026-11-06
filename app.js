@@ -732,6 +732,22 @@ async function fetchSheetItems(url) {
 async function loadSheetData() {
   library = await fetchSheetItems(SHEET_URL);
 
+  // Fics posted in the Discord library that aren't in the sheet yet (extra-fics.json).
+  // Once a row for the same title + author is in the sheet, the sheet's row wins.
+  try {
+    const res = await fetch("extra-fics.json");
+    if (res.ok) {
+      const have = new Set(library.map((i) => `${normKey(i.title)}|${normKey(i.author)}`));
+      for (const e of await res.json()) {
+        if (have.has(`${normKey(e.title)}|${normKey(e.author)}`)) continue;
+        const item = { cortsTiktokRecs: "", dramioneBuddyRead: "", nonDramioneBuddyRead: "", cover: "", ...e };
+        if (item.title && !isNotShared(item)) library.push(item);
+      }
+    }
+  } catch (e) {
+    /* optional */
+  }
+
   await applyCoverMap();
 
   $("libraryCount").innerHTML =
