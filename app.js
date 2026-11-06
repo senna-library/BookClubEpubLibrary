@@ -42,6 +42,9 @@ const NOT_SHARED = [
   { name: "Shamione", allWorks: true },
   { name: "Sinflower81", allWorks: true },
   { name: "VioletGrey", allWorks: true },
+  // Removed for bullying (shown in their own section on the page)
+  { name: "briarandbones", allWorks: true, bullying: true },
+  { name: "Knickerandkneazles", allWorks: true, bullying: true },
 ];
 
 // Hide anything by these authors from the library, even if a row is still in the sheet.
@@ -985,9 +988,11 @@ renderTypesets();
 // Not shared (author requests)
 // ---------------------------------------------------------------------------
 
-$("notSharedList").innerHTML = NOT_SHARED.map((e) => `
+const notSharedLi = (e) => `
   <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}</li>
-`).join("");
+`;
+$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying).map(notSharedLi).join("");
+$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying).map(notSharedLi).join("");
 $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
 
 // ---------------------------------------------------------------------------
