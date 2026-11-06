@@ -46,6 +46,7 @@ const NOT_SHARED = [
   { name: "briarandbones", allWorks: true, bullying: true },
   { name: "Knickerandkneazles", allWorks: true, bullying: true },
   { name: "MadeinLavendah", allWorks: true, bullying: true },
+  { name: "EscapeInMyBookshelf", allWorks: true, bullying: true },
 ];
 
 // Hide anything by these authors from the library, even if a row is still in the sheet.
