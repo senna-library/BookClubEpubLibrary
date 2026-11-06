@@ -46,6 +46,7 @@ const NOT_SHARED = [
   { name: "RiddleMe_Nott (KLaColeReads)", allWorks: true },
   { name: "Shamione", allWorks: true },
   { name: "Sinflower81", allWorks: true },
+  { name: "thelostriversong", allWorks: true },
   { name: "VioletGrey", allWorks: true },
   // Removed for talking about admins (shown in their own section on the page)
   { name: "briarandbones", allWorks: true, bullying: true, note: "removed November 5, 2026" },
