@@ -45,6 +45,7 @@ const NOT_SHARED = [
   // Removed for bullying (shown in their own section on the page)
   { name: "briarandbones", allWorks: true, bullying: true },
   { name: "Knickerandkneazles", allWorks: true, bullying: true },
+  { name: "MadeinLavendah", allWorks: true, bullying: true },
 ];
 
 // Hide anything by these authors from the library, even if a row is still in the sheet.
