@@ -7,27 +7,35 @@
    ========================================================================== */
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* forest */
-  --bg: #12241b;
-  --surface: #183024;        /* raised: inputs, buddy-read band */
-  --rule: #2a4638;
-  --rule-strong: #3f6150;
+  /* palette: Royal Violet 731DD8, Stormy Teal 0F7173, Dust Grey E4DFDA,
+     Soft Fawn D4B483, Lobster Pink C1666B, Emerald 2FBF71 */
+  --violet: #731DD8;
+  --teal: #0F7173;
+  --grey: #E4DFDA;
+  --fawn: #D4B483;
+  --pink: #C1666B;
+  --emerald: #2FBF71;
 
-  /* sage + ivory carry hierarchy */
-  --sage: #8fae9a;
-  --sage-bright: #b5cbbb;
-  --text: #f0ead9;
-  --text-soft: #d8d6c8;
-  --text-muted: #a9bba9;
-  --text-faint: #86a08f;
+  /* Lavender Grey page, Dust Grey panels, Dusty Mauve lines, dark plum ink text */
+  --bg: #9FA4C4;
+  --surface: #E4DFDA;        /* raised: inputs, buddy-read band, banner (Dust Grey) */
+  --rule: #9E768F;
+  --rule-strong: #9E768F;
 
-  /* champagne gold: sparingly */
-  --gold: #dcc48c;
-  --gold-dim: #a9925c;
+  --sage: #9E768F;
+  --sage-bright: #2a1634;
+  --text: #1e1626;
+  --text-soft: #2a1f33;
+  --text-muted: #34283f;
+  --text-faint: #3d3049;
 
-  --danger: #ef8a96;
+  /* deep mauve: links and active states */
+  --gold: #3b1f33;
+  --gold-dim: #6f5068;
+
+  --danger: #5c0f17;
 
   --font-display: "Cormorant Garamond", "Garamond", "Georgia", serif;
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -63,6 +71,13 @@ body {
   font-size: 0.97rem;
   line-height: 1.6;
   min-height: 100vh;
+}
+
+body::before {              /* the four Hogwarts houses: Gryffindor, Hufflepuff, Ravenclaw, Slytherin */
+  content: "";
+  display: block;
+  height: 6px;
+  background: linear-gradient(90deg, #740001 0 25%, #FFDB00 25% 50%, #0E1A40 50% 75%, #1A472A 75% 100%);
 }
 
 .wrap {
@@ -222,7 +237,7 @@ select { cursor: pointer; }
 select:focus {
   outline: none;
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(220, 196, 140, 0.22);
+  box-shadow: 0 0 0 3px rgba(158, 118, 143, 0.45);
 }
 
 .tab-content.active { min-height: 100vh; min-height: 100svh; }
@@ -370,7 +385,7 @@ select:focus {
   border-radius: var(--radius-cover);
   background: var(--cv-bg);
   color: var(--cv-fg);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
   text-decoration: none;
   container-type: inline-size;
 }
@@ -424,13 +439,13 @@ select:focus {
   opacity: 0.6;
 }
 
-/* palette: forest, moss, deep, sage, slate-green, cream */
-.cover-0 { --cv-bg: #1f4a38; --cv-fg: #f0ead9; }
-.cover-1 { --cv-bg: #2d5f4c; --cv-fg: #f0ead9; }
-.cover-2 { --cv-bg: #0d2219; --cv-fg: #dcc48c; }
-.cover-3 { --cv-bg: #a9bba9; --cv-fg: #12241b; }
-.cover-4 { --cv-bg: #3a4d43; --cv-fg: #f0ead9; }
-.cover-5 { --cv-bg: #e4dcc4; --cv-fg: #1d3a2d; }
+/* palette: violet, teal, deep violet, fawn, pink, emerald */
+.cover-0 { --cv-bg: #731DD8; --cv-fg: #E4DFDA; }
+.cover-1 { --cv-bg: #0F7173; --cv-fg: #E4DFDA; }
+.cover-2 { --cv-bg: #3a0f78; --cv-fg: #D4B483; }
+.cover-3 { --cv-bg: #D4B483; --cv-fg: #26103f; }
+.cover-4 { --cv-bg: #C1666B; --cv-fg: #1d0d34; }
+.cover-5 { --cv-bg: #2FBF71; --cv-fg: #0b2a2b; }
 
 .cover-img {
   position: absolute;
@@ -511,7 +526,7 @@ a.cover:hover { transform: translateY(-2px); }
   overflow-wrap: anywhere;
   padding: 0.05rem 0.45rem;
   border-radius: var(--radius-tag);
-  background: rgba(143, 174, 154, 0.09);
+  background: rgba(158, 118, 143, 0.25);
   font-size: 0.7rem;
   color: var(--text-faint);
   text-transform: lowercase;
@@ -526,7 +541,7 @@ a.cover:hover { transform: translateY(-2px); }
   right: 0;
   padding: 2px;
   border-radius: var(--radius-cover);
-  background: #c8e4d4;   /* light backing so the dark-green seal reads on the dark page */
+  background: #fff;   /* light backing so the dark seal reads */
 }
 .cort-badge { display: block; width: 36px; height: auto; }
 
@@ -634,7 +649,7 @@ a.cover:hover { transform: translateY(-2px); }
   font-family: var(--font-ui);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--gold);
+  color: var(--text);         /* emerald is too low-contrast on the teal band */
 }
 
 /* a month with no pick collapses to a single quiet line */
@@ -772,3 +787,17 @@ a.cover:hover { transform: translateY(-2px); }
 
 .not-shared-sub { margin: 1rem 0 0.4rem; font-size: 1rem; color: var(--text); }
 .not-shared-sub-bold { font-weight: 700; color: var(--gold); }
+
+
+/* ---------- Dust Grey panels on the Lavender Grey page ---------- */
+
+.buddy-reads, .disclaimer { --gold: #7a4f6c; --rule-strong: #9E768F; }
+.search-icon { color: #7a4f6c; }
+.tab-btn[aria-selected="true"] { color: #3b1f33; border-bottom-color: #3b1f33; font-weight: 600; }
+.corts { background: #fff; }
+.not-shared-sub-bold { color: #3b1f33; }
+.masthead h1 span { color: #6b3f5d; }
+
+/* buttons: dark plum, light text; Dusty Mauve on hover */
+.btn { background: #4B2E42; border-color: #4B2E42; color: #F2EFEB; }
+.btn:hover { background: #9E768F; border-color: #9E768F; color: #1e1626; }
