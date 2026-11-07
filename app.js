@@ -22,8 +22,14 @@ const FALLBACK_DRAMIONE_PICK = {
   ao3Url: "https://archiveofourown.org/works/48861727/chapters/123263134",
 };
 
+// The "No Share" tab of the server sheet, published as TSV. While this is empty (or the tab can't be
+// read) the built-in list below is used. Columns: Name, Type, By, Section, Note.
+const NOSHARE_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDrnZp9JF0MARMOJRZYdAEjNj9gB5RnTNcYKIAwA2Grf41H5wQ9OQY7fNH7xE727mkvYkM4nhR56QZ/pub?gid=1743672124&single=true&output=tsv";
+
 // Fics we don't share at the authors' request (all-works entries have no `by`)
-const NOT_SHARED = [
+let NOT_SHARED = [
+  { name: "achromatics", allWorks: true },
   { name: "AccioMjolnir", allWorks: true },
   { name: "After the Sea", by: "Colubrina" },
   { name: "BlueZeldana", allWorks: true },
@@ -73,12 +79,52 @@ const NOT_SHARED = [
 // "All works" entries match the author (pen names in brackets count too, and so does
 // any co-author); entries with `by` hide only that title by that author.
 const normKey = (s) => String(s || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "");
-const NOT_SHARED_RULES = NOT_SHARED.map((e) => {
+const buildNotSharedRules = (list) => list.map((e) => {
   const names = new Set([normKey(e.name)]);
   const m = e.name.match(/^(.*?)\s*\((.*)\)\s*$/);
   if (m) { names.add(normKey(m[1])); names.add(normKey(m[2])); }
   return { names, title: e.allWorks ? null : normKey(e.name), by: e.by ? normKey(e.by) : null };
 });
+let NOT_SHARED_RULES = buildNotSharedRules(NOT_SHARED);
+
+// Replace the built-in list with the sheet's "No Share" tab (once). Any failure keeps the built-in list.
+let notSharedLoad = null;
+function loadNotShared() {
+  if (!NOSHARE_URL) return Promise.resolve();
+  notSharedLoad ||= (async () => {
+    try {
+      const res = await fetch(NOSHARE_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const all = (await res.text()).trim().split(/\r?\n/).map((r) => r.split("\t"));
+      const at = all.findIndex((r) => r.some((c) => c.trim().toLowerCase() === "name")); // skip any banner row above the headers
+      if (at < 0) throw new Error("no Name column");
+      const [header, ...rows] = all.slice(at);
+      const col = (name) => header.findIndex((h) => h.trim().toLowerCase() === name);
+      const [cName, cType, cBy, cSection, cNote] = ["name", "type", "by", "section", "note"].map(col);
+      if (cName < 0) throw new Error("no Name column");
+      const cell = (r, c) => (c >= 0 ? (r[c] || "").trim() : "");
+      const list = rows.filter((r) => cell(r, cName)).map((r) => {
+        const type = cell(r, cType).toLowerCase();
+        const section = cell(r, cSection).toLowerCase();
+        const note = cell(r, cNote);
+        const e = { name: cell(r, cName) };
+        if (type.startsWith("title")) e.by = cell(r, cBy); else e.allWorks = true;
+        if (section.startsWith("talk")) { e.bullying = true; if (note) e.note = note; }
+        else if (section.startsWith("left")) { e.leftOut = true; if (note) e.note = note; }
+        else if (section.includes("talk")) { e.alsoBullying = true; e.requestNote = "removed at request"; if (note) e.note = note; }
+        else if (note) e.requestNote = note;
+        return e;
+      });
+      if (!list.length) throw new Error("empty tab");
+      NOT_SHARED = list;
+      NOT_SHARED_RULES = buildNotSharedRules(NOT_SHARED);
+      if (typeof renderNotShared === "function") renderNotShared();
+    } catch (err) {
+      console.warn("No Share tab not loaded, using the built-in list:", err);
+    }
+  })();
+  return notSharedLoad;
+}
 
 function isNotShared(item) {
   const authors = String(item.author || "").split(/,|&|\band\b/).map(normKey).filter(Boolean);
@@ -688,6 +734,7 @@ async function applyCoverMap(items = library) {
 }
 
 async function fetchSheetItems(url) {
+  await loadNotShared();
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
@@ -1034,9 +1081,13 @@ renderTypesets();
 const notSharedLi = (e, noteText) => `
   <li>${esc(e.name)}${e.by ? ` <span>by ${esc(e.by)}</span>` : ""}${e.allWorks ? ` <span>(all works)</span>` : ""}${noteText ? ` <span>· ${esc(noteText)}</span>` : ""}</li>
 `;
-$("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying && !e.leftOut).map((e) => notSharedLi(e, e.requestNote)).join("");
-$("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying || e.leftOut).map((e) => notSharedLi(e, e.note)).join("");
-$("notSharedCount").textContent = `(${NOT_SHARED.length})`;
+function renderNotShared() {
+  $("notSharedList").innerHTML = NOT_SHARED.filter((e) => !e.bullying && !e.leftOut).map((e) => notSharedLi(e, e.requestNote)).join("");
+  $("bullyingList").innerHTML = NOT_SHARED.filter((e) => e.bullying || e.alsoBullying || e.leftOut).map((e) => notSharedLi(e, e.note)).join("");
+  $("notSharedCount").textContent = `(${NOT_SHARED.length})`;
+}
+renderNotShared();
+loadNotShared();
 
 // ---------------------------------------------------------------------------
 // Backup check: is a fic in the backup library? (backup-index.json is built
